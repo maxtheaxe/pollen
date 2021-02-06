@@ -1,19 +1,23 @@
 import pgpy
 from pgpy.constants import PubKeyAlgorithm, KeyFlags, HashAlgorithm, SymmetricKeyAlgorithm, CompressionAlgorithm
-# import os.path
-# from os import path
+import os.path
+from os import path
 
 class Pocket:
 	'''handles everything that has to do with the user's primary key'''
 	def __init__(self, key = None, name = None, password = None):
 		# # if key not passed as arg, should just check if exists in local dir
-		# if (path.exists("pollen_key.asc")):
-		# 	key, _ = pgpy.PGPKey.from_file("pollen_key.asc") # using key from local storage instead
-		if ((key == None) and (name == None) and (password == None)): # check if all None
-			# may remove later, depending on how key is stored
-			raise ValueError("all arguments cannot be None")
+		if ((key == None) and (path.exists("pollen_key.asc"))):
+			key, _ = pgpy.PGPKey.from_file("pollen_key.asc") # using key from local storage instead
+		# if ((key == None) and (name == None) and (password == None)): # check if all None
+		# 	# may remove later, depending on how key is stored
+		# 	raise ValueError("all arguments cannot be None")
 		elif ((name != None) and (password != None)): # if name and pw are given
 			key = self.create_key(name, password)
+		else: # some sort of mistake with arguments
+			# raise error and show faulty arguments
+			error_text = "given args: " + str(key) + ", " + name + ", " + password
+			raise ValueError(error_text)
 		self.key = key # store key in object
 		# self.password = password # not sure if this is how I should be using context mgr
 
@@ -67,12 +71,12 @@ if __name__ == '__main__':
 	new_key = Pocket(name = "max", password = password)
 	raw_message = "here is a test message"
 	pgp_message = pgpy.PGPMessage.new(raw_message)
-	encrypted_message = new_key.public_key().encrypt(pgp_message)
 	# with new_key:
 	signed_message = new_key.sign_message(pgp_message, password)
+	encrypted_message = new_key.public_key().encrypt(signed_message)
 	# encrypted_message = new_key.public_key().encrypt(pgp_message)
 	decrypted_message = new_key.decrypt_message(encrypted_message, password)
 	print("\nsigned message:\n", signed_message)
 	print("\nencrypted message:\n", encrypted_message)
 	print("\ndecrypted message:\n", decrypted_message)
-	print("\ndecrypted message contens:\n", decrypted_message.message)
+	print("\ndecrypted message contents:\n", decrypted_message.message)

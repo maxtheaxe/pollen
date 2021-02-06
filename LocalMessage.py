@@ -1,7 +1,9 @@
 import pgpy
 from datetime import datetime
+from Pocket import Pocket
 
 class LocalMessage:
+	'''storage format of all local messages'''
 	def __init__(self, message, peer, sent):
 		self.message = message # plaintext message body
 		self.peer = peer # public key of other person
@@ -35,9 +37,24 @@ class LocalMessage:
 		'''returns datetime obj of when it was sent or received'''
 		return self.inception
 
+	def prep(self, password):
+		'''returns signed, encrypted message'''
+		# create PGPMessage obj
+		pgp_message = pgpy.PGPMessage.new(self.message)
+		# sign message using priv key
+		signed_message = Pocket().sign_message(pgp_message, password)
+		# encrypt signed message using peer's pub key
+		encrypted_message = self.peer.encrypt(signed_message)
+		return encrypted_message
+
 if __name__ == '__main__':
 	message = "hey, do messages work?"
-	peer = pgpy.PGPKey.from_file("pgp_keys.asc") # pubkey from local dir
+	password = "fake_password"
+	# peer = pgpy.PGPKey.from_file("pgp_keys.asc") # pubkey from local dir
+	peer = Pocket().public_key() # pubkey from local dir
+	print("type: ", type(peer))
 	sent = False
 	new_message = LocalMessage(message, peer, sent)
 	print(new_message)
+	prepped_message = new_message.prep(password)
+	print(prepped_message)
