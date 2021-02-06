@@ -41,6 +41,12 @@ class TransitMessage:
 		}
 		return json.dumps(transit_json) # return dict as json
 
+	def for_self(self):
+		'''returns bool of whether recipient is self'''
+		# direct comparison was causing issues--I think it was checking references
+		own_pubkey = bytes(Pocket().public_key()) # grab own public key
+		return (own_pubkey == bytes(self.recipient))
+
 if __name__ == '__main__':
 	# test code from LocalMessage (surely there's a better way, sorry)
 	message = "hey, do messages work?"
@@ -59,3 +65,8 @@ if __name__ == '__main__':
 	print("pgp_message type: ", type(second_transit.pgp_message))
 	print("sender type: ", type(second_transit.sender))
 	print("recipient type: ", type(second_transit.recipient))
+	# check if self is recipient
+	# are_they_the_same = (bytes(second_transit.sender) == bytes(second_transit.recipient))
+	# print("they are the same: ", are_they_the_same)
+	for_me = new_transit.for_self()
+	print("I am the intended recipient: ", for_me)
