@@ -22,3 +22,7 @@ class MessageBox:
 	def remove_message(self, message_index):
 		'''removes, returns message at a given index'''
 		return self.messages.pop(message_index)
+
+	def count_messages(self):
+		'''return the number of messages in MessageBox'''
+		return len(self.messages)

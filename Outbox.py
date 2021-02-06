@@ -17,6 +17,14 @@ class Outbox(MessageBox):
 		# call the parent method with the converted message
 		super().add_message(outbox_message)
 
+	def add_transit_message(self, new_message, deliveries = self.deliveries):
+		'''add new TransitMessage to list as OutboxMessage'''
+		# convert the TransitMessage to an OutboxMessage (TransitMessage w delivery count)
+		outbox_message = OutboxMessage(deliveries = deliveries, transit_message = new_message)
+		# call the parent method with the converted message
+		super().add_message(outbox_message)
+		return
+
 	def send_message(self):
 		'''send the message from front of list, decrement deliveries and send to back'''
 		ready_message = self.messages.pop(0) # pop out first message in list
@@ -25,3 +33,4 @@ class Outbox(MessageBox):
 			super().add_message(ready_message) # re-add to end of list
 		final_message = ready_message.jsonify() # jsonify popped message in order to send
 		# connect to node and actually deliver message using grapple
+		return final_message

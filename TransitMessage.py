@@ -27,7 +27,7 @@ class TransitMessage:
 		else:
 			# raise error and show faulty arguments
 			error_text = "given args: " + str(local_message) + ", " + password + ", " 
-			error_text += pickled_message # yeahh sorry there's a better way
+			error_text += jsoned_message # yeahh sorry there's a better way
 			raise ValueError(error_text)
 
 	def jsonify(self):
