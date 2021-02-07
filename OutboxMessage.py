@@ -4,10 +4,20 @@ import json
 
 class OutboxMessage(TransitMessage):
 	'''numbered version of TransitMessage for keeping track of times message was sent'''
-	def __init__(self, local_message = None, password = None, deliveries = None, jsonified_transit = None):
+	def __init__(self, local_message = None, password = None, deliveries = None,
+					jsonified_transit = None, transit_message = None):
 		# needed args to create from local message
 		local_args = [local_message, password, deliveries]
-		if (jsonified_transit != None): # must be transit message input
+		# should probably group this w jsonified and sort by checking type later
+		# also definitely a better way of doing this...will explore later
+		# https://stackoverflow.com/q/30105134
+		if (transit_message != None):
+			# store fields in appropriate areas (again, this is temporary)
+			self.pgp_message = transit_message.pgp_message
+			self.sender = transit_message.sender
+			self.recipient = transit_message.recipient
+		# i definitely jsonified something somewhere else that was unnecessary (inbox?)
+		elif (jsonified_transit != None): # must be jsonified transit message input
 			# un-json data and grab values from dict, convert to proper type
 			unjsoned_data = json.loads(jsonified_transit)
 			self.pgp_message = pgpy.PGPMessage.from_blob(unjsoned_data["pgp_message"])
