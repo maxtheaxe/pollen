@@ -26,3 +26,19 @@ class MessageBox:
 	def count_messages(self):
 		'''return the number of messages in MessageBox'''
 		return len(self.messages)
+
+if __name__ == '__main__':
+	# import pgpy
+	new_box = MessageBox([])
+	message = "hey, do messages work?"
+	password = "fake_password"
+	peer, _ = pgpy.PGPKey.from_file("other_pub.asc") # pubkey from local dir
+	print("type: ", type(peer))
+	sent = False
+	new_message = LocalMessage(message, peer, sent)
+	print(new_message)
+	print("num messages: ", new_box.count_messages())
+	new_box.add_message(new_message)
+	print("num messages: ", new_box.count_messages())
+	new_box.remove_message(0)
+	print("num messages: ", new_box.count_messages())

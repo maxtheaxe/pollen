@@ -63,8 +63,13 @@ class Pocket:
 
 	def decrypt_message(self, message, password):
 		'''takes in encrypted message and returns decrypted version'''
-		with self.key.unlock(password):
-			return self.key.decrypt(message)
+		with self.key.unlock(password): # using password to unlock priv key
+			return self.key.decrypt(message) # return decrypted pgp message
+
+	def raw_decrypt(self, message, password):
+		'''takes in encrypted message and returns string contents of decrypted version'''
+		with self.key.unlock(password): # using password to unlock priv key
+			return self.key.decrypt(message).message # return decrypted *contents*
 
 if __name__ == '__main__':
 	password = "fake_password"

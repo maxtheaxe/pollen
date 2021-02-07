@@ -47,6 +47,18 @@ class TransitMessage:
 		own_pubkey = bytes(Pocket().public_key()) # grab own public key
 		return (own_pubkey == bytes(self.recipient))
 
+	def detransit(self, password):
+		'''returns LocalMessage version of self'''
+		contents = Pocket().raw_decrypt(self.pgp_message, password)
+		# should probably make for_self into from_self to be consistent
+		if self.for_self(): # if self is recipient
+			peer = self.sender # peer sent it
+			sent = False
+		else: # if self sent it
+			peer = self.recipient # peer will receive it
+			sent = True
+		return LocalMessage(contents, peer, sent)
+
 if __name__ == '__main__':
 	# test code from LocalMessage (surely there's a better way, sorry)
 	message = "hey, do messages work?"
