@@ -5,15 +5,15 @@ from os import path
 
 class Pocket:
 	'''handles everything that has to do with the user's primary key'''
-	def __init__(self, key = None, name = None, password = None):
+	def __init__(self, key = None, name = None, password = None, filename = "pollen_key.asc"):
 		# # if key not passed as arg, should just check if exists in local dir
-		if ((key == None) and (path.exists("pollen_key.asc"))):
-			key, _ = pgpy.PGPKey.from_file("pollen_key.asc") # using key from local storage instead
+		if ((key == None) and (path.exists(filename))):
+			key, _ = pgpy.PGPKey.from_file(filename) # using key from local storage instead
 		# if ((key == None) and (name == None) and (password == None)): # check if all None
 		# 	# may remove later, depending on how key is stored
 		# 	raise ValueError("all arguments cannot be None")
 		elif ((name != None) and (password != None)): # if name and pw are given
-			key = self.create_key(name, password)
+			key = self.create_key(name, password, filename)
 		else: # some sort of mistake with arguments
 			# raise error and show faulty arguments
 			error_text = "given args: " + str(key) + ", " + name + ", " + password
@@ -32,7 +32,7 @@ class Pocket:
 	# 	# https://www.geeksforgeeks.org/context-manager-in-python/
 	# 	return
 
-	def create_key(self, name, password):
+	def create_key(self, name, password, filename):
 		'''returns a new PGP key given a desired name and password'''
 		# make new primary key (RSA)
 		key = pgpy.PGPKey.new(PubKeyAlgorithm.RSAEncryptOrSign, 4096)
@@ -46,14 +46,24 @@ class Pocket:
 		# encrypt key with given password
 		key.protect(password, SymmetricKeyAlgorithm.AES256, HashAlgorithm.SHA256)
 		# store key to file in local dir
-		key_file = open("pollen_key.asc", "w")
+		key_file = open(filename, "w")
 		key_file.write(str(key))
 		key_file.close()
+		# also save public key
+		public_filename = ("public_" + filename)
+		self.save_public_key(key, public_filename)
 		return key # return newly-minted key
 
 	def public_key(self):
 		'''returns public key associated with primary key'''
 		return self.key.pubkey
+
+	def save_public_key(self, key, filename):
+		'''saves public key to local dir'''
+		key_file = open(filename, "w")
+		key_file.write(str(key.pubkey))
+		key_file.close()
+		return
 
 	def sign_message(self, message, password):
 		'''takes in PGP message and returns signed version using private key'''
@@ -72,8 +82,9 @@ class Pocket:
 			return self.key.decrypt(message).message # return decrypted *contents*
 
 if __name__ == '__main__':
+	filename = "pollen_key.asc"
 	password = "fake_password"
-	new_key = Pocket(name = "max", password = password)
+	new_key = Pocket(name = "max", password = password, filename = filename)
 	raw_message = "here is a test message"
 	pgp_message = pgpy.PGPMessage.new(raw_message)
 	# with new_key:

@@ -1,7 +1,5 @@
-pollen_key.asc
-other_pollen_key.asc
-pgp_keys.asc
-other_pub.asc
+*.asc
+# pgp_keys.asc
 __pycache__/
 run_node.bat
 scrap.py
