@@ -4,11 +4,14 @@ from Outbox import Outbox
 from socket import *
 # import scapy
 # import getmac
+import sys
 
 class Grapple:
 	'''handles all connections to and exchange of information with remote nodes'''
 	def __init__(self):
 		self.socket = None # stores TCP connection with node
+		# https://stackoverflow.com/a/26641964/4513452
+		self.big_drop = "" # stores all messages, to be sent all at once
 
 	def get_socket(self):
 		'''returns current socket (active or otherwise)'''
@@ -35,13 +38,22 @@ class Grapple:
 		self.socket.close()
 		return
 
+	def add_to_drop(self, new_message):
+		'''adds message to string with "|" as dellineator'''
+		# I apologize to anyone who reads this--no time to justify it right now
+		self.big_drop += new_message + "$$$$"
+		return
+
 	def socket_message(self, message):
 		'''encode and send given message over socket'''
 		# https://stackoverflow.com/a/14473492/4513452
 		# janky, but default bytes() method for pgpy was causing encoding issues
 		message = str(message)
-		print("message being sent: ", message)
-		self.socket.send( bytes(message, encoding='utf8') )
+		# print("size of message being sent: ", sys.getsizeof(message))
+		# print("message being sent: ", message)
+		# self.socket.send( bytes(message, encoding='utf8') )
+		# as temporary fix, instead of sending, add to compiled message
+		self.add_to_drop(message)
 		return
 
 	def identify_self(self):
@@ -55,18 +67,28 @@ class Grapple:
 	def receive_messages(self, own_inbox):
 		'''receive incoming messages via socket'''
 		# wait to receive the response from the server (using buffer size of 2048)
-		incoming_messages = [] # make list to hold all incoming messages
-		# while not received end indicator (breaks out if received)
-		count = 0
-		while True: # easier this way because each read of socket is new message
-			caught_message = self.socket.recv(2048).decode() # decoded socket data
-			print("\n\tcaught message: ", caught_message)
-			count += 1
-			if count == 10:
-				break
-			if (caught_message == "RECV_FINISHED"): # received end indicator
-				break
-			incoming_messages.append(caught_message) # append to message list
+		# incoming_messages = [] # make list to hold all incoming messages
+		# # while not received end indicator (breaks out if received)
+		# while True: # easier this way because each read of socket is new message
+		# 	caught_message = self.socket.recv(2048).decode() # decoded socket data
+		# 	print("\n\tcaught message: ", caught_message)
+		# 	if (caught_message == "RECV_FINISHED"): # received end indicator
+		# 		break
+		# 	incoming_messages.append(caught_message) # append to message list
+		print("4.1")
+		# catch incoming messages (really just one big one)
+		incoming_data = self.socket.recv(2048).decode()
+		# incoming_data = ""
+		# while True:
+		# 	# receive data stream
+		# 	data_catch = self.socket.recv(2048).decode()
+		# 	# wait for end of message indicator (doesn't matter that it's after)
+		# 	if (data_catch == "####"):
+		# 		break
+		# 	# continually add incoming data to storage string
+		# 	incoming_data += data_catch
+		print("4.2")
+		incoming_messages = incoming_data.split("$")[:-1] # cut off end because it's not msg
 		for i in range(len(incoming_messages)): # for all received messages
 			# don't know what I was doing here, but pretty sure this method doesn't exist
 			# own_inbox.add_transit_message(incoming_messages[i]) # add to given inbox
@@ -81,30 +103,24 @@ class Grapple:
 			# "send" message at front of outbox by adding to outgoing messages list
 			# and decrementing remaining deliveries to make
 			outgoing_messages.append(own_outbox.send_message())
-		# janky, but for sake of hackathon, slowing messages down
-		import time
 		# send all messages in outgoing messages list
 		for i in range(len(outgoing_messages)):
 			self.socket_message( outgoing_messages[i] )
-			time.sleep(2)
-		# janky, but for sake of hackathon
-		time.sleep(2)
 		# send message indicating end of send
-		self.socket_message("SEND_FINISHED")
+		# self.socket_message("SEND_FINISHED") # not for new type
+		# temporary fix
+		print("actual message: ", (self.big_drop + "####"))
+		self.socket.send( bytes((self.big_drop + "####"), encoding='utf8') )
 		return
 
 	def embrace(self, own_inbox, own_outbox):
 		'''identifies node on local network, instantiates connection and exchanges messages'''
-		print("\n\tembrace 1")
 		node_address = self.find_node() # identify and record node location
-		print("\n\tembrace 2")
 		self.socket = self.setup(node_address) # instantiate socket and save to self
-		print("\n\tembrace 3")
-		self.identify_self() # identify self to node via socket
-		print("\n\tembrace 4")
-		self.receive_messages(own_inbox) # collect incoming messages and add to inbox
-		print("\n\tembrace 5")
+		self.identify_self() # identify self to node (just add to front of out data)
+		print("embrace 1")
 		self.send_messages(own_outbox) # send all outgoing messages from outbox
-		print("\n\tembrace 6")
+		print("embrace 2")
+		self.receive_messages(own_inbox) # collect incoming messages and add to inbox
+		print("embrace 3")
 		self.close()
-		print("\n\tembrace 7")

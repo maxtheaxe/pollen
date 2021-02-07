@@ -28,50 +28,40 @@ class Node:
 			print("\n\t-------new loop-------")
 			# create a new communication socket if requested
 			communication_socket, client_address = self.socket.accept()
-			# grab the incoming message on communication socket
-			incoming_message = communication_socket.recv(2048)
-			print("incoming message type: ", type(incoming_message))
-			# decode received message
-			incoming_message = (incoming_message.decode())
-			print("incoming message type: ", type(incoming_message))
-			# let user know message was received
-			# print('\n\tMessage \n"{}" received'.format(incoming_message))
-			# should check if incoming message is a pgp public key (for now assuming it is)
-			# retrieve messages associated with given public key
-			collected_messages = self.nodebox.collect_messages(public_key = incoming_message)
+			# catch incoming messages (really just one big one)
+			incoming_data = communication_socket.recv(2048).decode()
+			# incoming_data = ""
+			# while True:
+			# 	# receive data stream
+			# 	data_catch = communication_socket.recv(2048).decode()
+			# 	# wait for end of message indicator (doesn't matter that it's after)
+			# 	if (data_catch == "####"):
+			# 		break
+			# 	# continually add incoming data to storage string
+			# 	incoming_data += data_catch
+			# split up incoming data into list of messages
+			print("before delete: ", incoming_data.split("$$$$"))
+			incoming_messages = incoming_data.split("$$$$")[:-1] # cut off end because it's not msg
+			# collect messages for user according to public key
+			collected_messages = self.nodebox.collect_messages(public_key = incoming_messages.pop(0))
 			print("collected_messages: ", collected_messages)
-			# janky, but for sake of hackathon, slowing messages down
-			import time
-			# send messages back
+			# build outgoing messages string
+			outgoing_messages = ""
 			for i in range(len(collected_messages)):
-				communication_socket.send( collected_messages[i].encode() ) # send over existing socket
-				time.sleep(2)
-			time.sleep(2)
-			# indicate done sending messages
-			communication_socket.send( "RECV_FINISHED".encode() )
+				outgoing_messages += collected_messages[i] + "$$$$"
+			# outgoing_messages += "SEND_FINISHED" # may not be necessary when sending all
+			# encode into outgoing data, add end indicator
+			outgoing_data = (outgoing_messages + "####").encode()
+			# send messages back
+			communication_socket.send(outgoing_data)
 			print("done sending messages to client")
-			received_messages = []
-			# listen for messages being dropped off while end hasn't been indicated
-			count = 0
-			while True: # easier this way because each read of socket is new message
-				 # decoded socket data
-				caught_message = communication_socket.recv(2048).decode()
-				print("caught_message: ", caught_message)
-				count += 1
-				# if count == 10:
-				# 	break
-				if (caught_message == "SEND_FINISHED"): # received end indicator
-					break
-				# append it to received list
-				received_messages.append(caught_message)
-			# done receiving messages, close socket
-			communication_socket.close()
-			print("closed socket")
+			# finish, close socket
+			# communication_socket.close()
 			# move all received messages to NodeBox
-			for i in range(len(received_messages)):
+			for i in range(len(incoming_messages)):
 				print("adding received")
-				self.nodebox.add_message(received_messages[i]) # add each message
-			print("done adding received")
+				self.nodebox.add_message(incoming_messages[i]) # add each message
+			print("done adding received: ", incoming_messages)
 			# finished embrace with user, wait for next one
 
 if __name__ == '__main__':
