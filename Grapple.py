@@ -75,23 +75,24 @@ class Grapple:
 		# 	if (caught_message == "RECV_FINISHED"): # received end indicator
 		# 		break
 		# 	incoming_messages.append(caught_message) # append to message list
-		print("4.1")
 		# catch incoming messages (really just one big one)
-		incoming_data = self.socket.recv(2048).decode()
-		# incoming_data = ""
-		# while True:
-		# 	# receive data stream
-		# 	data_catch = self.socket.recv(2048).decode()
-		# 	# wait for end of message indicator (doesn't matter that it's after)
-		# 	if (data_catch == "####"):
-		# 		break
-		# 	# continually add incoming data to storage string
-		# 	incoming_data += data_catch
-		print("4.2")
-		incoming_messages = incoming_data.split("$")[:-1] # cut off end because it's not msg
+		# incoming_data = self.socket.recv(2048).decode()
+		incoming_data = ""
+		while True:
+			# receive data stream
+			data_catch = self.socket.recv(2048).decode()
+			# print("data_catch: ", data_catch)
+			# continually add incoming data to storage string
+			incoming_data += data_catch
+			# wait for end of message indicator
+			if (incoming_data[-4:] == "####"):
+				break
+		incoming_messages = incoming_data.split("$$$$")[:-1] # cut off end because it's not msg
 		for i in range(len(incoming_messages)): # for all received messages
 			# don't know what I was doing here, but pretty sure this method doesn't exist
 			# own_inbox.add_transit_message(incoming_messages[i]) # add to given inbox
+			# print("incoming message type: ", type(incoming_messages[i]))
+			# print("incoming message: ", incoming_messages[i])
 			own_inbox.add_message( incoming_messages[i] ) # add to given inbox
 		return
 
@@ -109,7 +110,7 @@ class Grapple:
 		# send message indicating end of send
 		# self.socket_message("SEND_FINISHED") # not for new type
 		# temporary fix
-		print("actual message: ", (self.big_drop + "####"))
+		# print("actual message: ", (self.big_drop + "####")
 		self.socket.send( bytes((self.big_drop + "####"), encoding='utf8') )
 		return
 
@@ -118,9 +119,6 @@ class Grapple:
 		node_address = self.find_node() # identify and record node location
 		self.socket = self.setup(node_address) # instantiate socket and save to self
 		self.identify_self() # identify self to node (just add to front of out data)
-		print("embrace 1")
 		self.send_messages(own_outbox) # send all outgoing messages from outbox
-		print("embrace 2")
 		self.receive_messages(own_inbox) # collect incoming messages and add to inbox
-		print("embrace 3")
 		self.close()

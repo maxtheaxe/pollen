@@ -25,26 +25,29 @@ class Node:
 		'''monitor a given socket for messages'''
 		# should loop infinitely while server is running
 		while True:
-			print("\n\t-------new loop-------")
 			# create a new communication socket if requested
 			communication_socket, client_address = self.socket.accept()
+			print("\n\t--------client  connected--------")
 			# catch incoming messages (really just one big one)
-			incoming_data = communication_socket.recv(2048).decode()
-			# incoming_data = ""
-			# while True:
-			# 	# receive data stream
-			# 	data_catch = communication_socket.recv(2048).decode()
-			# 	# wait for end of message indicator (doesn't matter that it's after)
-			# 	if (data_catch == "####"):
-			# 		break
-			# 	# continually add incoming data to storage string
-			# 	incoming_data += data_catch
+			incoming_data = ""
+			while True:
+				# receive data stream
+				data_catch = communication_socket.recv(2048).decode()
+				# print("data_catch: ", data_catch)
+				# continually add incoming data to storage string
+				incoming_data += data_catch
+				# wait for end of message indicator
+				# print("end: ", (incoming_data[-4:]))
+				if (incoming_data[-4:] == "####"):
+					break
 			# split up incoming data into list of messages
-			print("before delete: ", incoming_data.split("$$$$"))
+			# print("before delete: ", incoming_data.split("$$$$"))
 			incoming_messages = incoming_data.split("$$$$")[:-1] # cut off end because it's not msg
 			# collect messages for user according to public key
 			collected_messages = self.nodebox.collect_messages(public_key = incoming_messages.pop(0))
-			print("collected_messages: ", collected_messages)
+			# notify number of messages received from client
+			print("\n\treceived {} messages from client".format(len(incoming_messages)))
+			# print("collected_messages: ", collected_messages)
 			# build outgoing messages string
 			outgoing_messages = ""
 			for i in range(len(collected_messages)):
@@ -54,19 +57,24 @@ class Node:
 			outgoing_data = (outgoing_messages + "####").encode()
 			# send messages back
 			communication_socket.send(outgoing_data)
-			print("done sending messages to client")
+			print("\n\tdelivered {} messages to client".format(len(collected_messages)))
+			# print("done sending messages to client")
 			# finish, close socket
-			# communication_socket.close()
+			communication_socket.close()
+			print("\n\t-------client disconnected-------\n")
 			# move all received messages to NodeBox
+			# print("incoming messages: ", incoming_messages)
+			# print("len incoming: ", len(incoming_messages))
 			for i in range(len(incoming_messages)):
-				print("adding received")
+				# print("adding received")
 				self.nodebox.add_message(incoming_messages[i]) # add each message
-			print("done adding received: ", incoming_messages)
+			# print("done adding received")
+			# print("nodebox len: ", self.nodebox.count_messages())
 			# finished embrace with user, wait for next one
 
 if __name__ == '__main__':
 	# announce self running
-	print("\n\tPollen Node Now Running...")
+	print("\n\t        Pollen Node Online        ")
 	# potentially load pickled version of old node later
 	node_instance = Node()
 	# start monitoring socket indefinitely

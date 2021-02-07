@@ -29,7 +29,7 @@ class Inbox(MessageBox):
 		for i in range(len(self.messages)):
 			# check if message is intended for self
 			if (self.messages[i].for_self()):
-				print("the message was for me")
+				# print("the message was for me")
 				# decrypt and convert to LocalMessage
 				local_message = self.plain_save(self.messages[i], password)
 				# add to conversation with appropriate peer (sender)

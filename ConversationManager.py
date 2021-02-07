@@ -9,7 +9,7 @@ class ConversationManager:
 
 	def add_message(self, new_message):
 		'''adds LocalMessage to appropriate conversation, creates it if doesn't exist'''
-		peer_key = new_message.get_peer() # get pubkey of peer to sort into proper convo
+		peer_key = str(new_message.get_peer()) # get pubkey of peer to sort into proper convo
 		# ** might need to convert pgp keys to bytes if there are issues later **
 		if peer_key not in self.conversations: # if convo with this peer doesn't exist yet
 			# then create a new conversation

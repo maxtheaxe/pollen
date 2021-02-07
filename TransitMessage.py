@@ -71,6 +71,7 @@ if __name__ == '__main__':
 	# make new TransitMessage using LocalMessage
 	new_transit = TransitMessage(new_message, password)
 	jsonified_transit = new_transit.jsonify()
+	print("jsonified_transit type: ", type(jsonified_transit))
 	print( jsonified_transit )
 	# recreate TransitMessage using jsonified TransitMessage
 	second_transit = TransitMessage(jsoned_message = jsonified_transit)
