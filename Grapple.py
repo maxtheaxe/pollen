@@ -56,7 +56,9 @@ class Grapple:
 		while str(client_socket.recv(2048)) != "RECV_FINISHED":
 			incoming_messages.append(client_socket.recv(2048)) # append to message list
 		for i in range(len(incoming_messages)): # for all received messages
-			own_inbox.add_transit_message(incoming_messages[i]) # add to given inbox
+			# don't know what I was doing here, but pretty sure this method doesn't exist
+			# own_inbox.add_transit_message(incoming_messages[i]) # add to given inbox
+			own_inbox.add_message(incoming_messages[i]) # add to given inbox
 		return
 
 	def send_messages(self, own_outbox):
