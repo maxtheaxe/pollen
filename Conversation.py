@@ -7,10 +7,10 @@ class Conversation(MessageBox):
 	'''handles all messages between two users'''
 	def __init__(self, peer, messages = []):
 		super().__init__(messages) # message storage list
-		self.friendly_name = self.grab_name(peer) # get temp random name
+		self.friendly_name = self.create_name(peer) # get temp random name
 		self.peer = peer # pgp key of other user in conversation
 
-	def grab_name(self, pgp_key):
+	def create_name(self, pgp_key):
 		'''returns first 8 character-long alpha sequence from given pgp key'''
 		# https://www.programiz.com/python-programming/regex#python-regex
 		pattern = '[a-zA-Z]{8}'
@@ -20,6 +20,10 @@ class Conversation(MessageBox):
 		else:
 			random_name = name_found.group() # grab the usable sequence
 		return random_name
+
+	def get_name(self):
+		'''returns friendly name of self'''
+		return self.friendly_name
 
 	def add_message(self, new_message):
 		'''add new LocalMessage to list'''

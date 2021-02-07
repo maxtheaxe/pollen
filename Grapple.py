@@ -74,7 +74,7 @@ class Grapple:
 		self.socket_message("SEND_FINISHED")
 		return
 
-	def embrace(self, outgoing_messages, own_inbox, own_outbox):
+	def embrace(self, own_inbox, own_outbox):
 		'''identifies node on local network, instantiates connection and exchanges messages'''
 		node_address = self.find_node() # identify and record node location
 		self.socket = self.setup(node_address) # instantiate socket and save to self
