@@ -19,7 +19,10 @@ class NodeBox(MessageBox):
 		'''retrieves and returns list of messages associated with given public key'''
 		matching_messages = []
 		print("type of incoming pubkey: ", type(public_key))
+		# print("pubkey:\n", public_key)
 		for i in reversed(range(len(self.messages))): # loop over all messages backwards
+			print("stored message type: ", type(self.messages[i]))
+			print("stored message: ", self.messages[i])
 			message_content = json.loads(self.messages[i]) # unload json into dict
 			# being explicit for testing later, bc I can't remember if one needs casting
 			message_target = message["recipient"]
@@ -33,8 +36,10 @@ class NodeBox(MessageBox):
 
 	def collect_messages(self, public_key, minimum = 5, multiplier = 2):
 		'''collect all messages to be sent to a user with given public key'''
+		print("collected func 1")
 		# collect messages actually intended for them into list
 		collected_messages = self.associated_messages(public_key)
+		print("collected func 2")
 		# calculate number of extra messages to send to user
 		# default min is 5, number extra goes up with increased usage by user
 		# by default, it collects 2 * the amount sent to them

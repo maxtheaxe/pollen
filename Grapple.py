@@ -1,6 +1,7 @@
 from Pocket import Pocket
 from Inbox import Inbox
 from Outbox import Outbox
+from socket import *
 # import scapy
 # import getmac
 
@@ -19,7 +20,7 @@ class Grapple:
 		# then compare mac addresses of all IPs to prefix for rpis
 		# (https://raspberrypi.stackexchange.com/a/13937)
 		# perform some sort of handshake with node to verify correctness
-		return "127.0.0.1" # for the scope of hackathon, node address addr is hardcoded
+		return ("127.0.0.1", 13337) # for the scope of hackathon, node address addr is hardcoded
 
 	def setup(self, server_info):
 		'''sets up socket for communication with node'''
@@ -37,7 +38,10 @@ class Grapple:
 	def socket_message(self, message):
 		'''encode and send given message over socket'''
 		# https://stackoverflow.com/a/14473492/4513452
-		self.socket.send( bytes(message) )
+		# janky, but default bytes() method for pgpy was causing encoding issues
+		message = str(message)
+		print("message being sent: ", message)
+		self.socket.send( bytes(message, encoding='utf8') )
 		return
 
 	def identify_self(self):
@@ -52,13 +56,21 @@ class Grapple:
 		'''receive incoming messages via socket'''
 		# wait to receive the response from the server (using buffer size of 2048)
 		incoming_messages = [] # make list to hold all incoming messages
-		# while not received end indicator
-		while str(client_socket.recv(2048)) != "RECV_FINISHED":
-			incoming_messages.append(client_socket.recv(2048)) # append to message list
+		# while not received end indicator (breaks out if received)
+		count = 0
+		while True: # easier this way because each read of socket is new message
+			caught_message = self.socket.recv(2048).decode() # decoded socket data
+			print("\n\tcaught message: ", caught_message)
+			count += 1
+			if count == 10:
+				break
+			if (caught_message == "RECV_FINISHED"): # received end indicator
+				break
+			incoming_messages.append(caught_message) # append to message list
 		for i in range(len(incoming_messages)): # for all received messages
 			# don't know what I was doing here, but pretty sure this method doesn't exist
 			# own_inbox.add_transit_message(incoming_messages[i]) # add to given inbox
-			own_inbox.add_message(incoming_messages[i]) # add to given inbox
+			own_inbox.add_message( incoming_messages[i] ) # add to given inbox
 		return
 
 	def send_messages(self, own_outbox):
@@ -69,18 +81,30 @@ class Grapple:
 			# "send" message at front of outbox by adding to outgoing messages list
 			# and decrementing remaining deliveries to make
 			outgoing_messages.append(own_outbox.send_message())
+		# janky, but for sake of hackathon, slowing messages down
+		import time
 		# send all messages in outgoing messages list
 		for i in range(len(outgoing_messages)):
-			self.socket_message(outgoing_messages[i])
+			self.socket_message( outgoing_messages[i] )
+			time.sleep(2)
+		# janky, but for sake of hackathon
+		time.sleep(2)
 		# send message indicating end of send
 		self.socket_message("SEND_FINISHED")
 		return
 
 	def embrace(self, own_inbox, own_outbox):
 		'''identifies node on local network, instantiates connection and exchanges messages'''
+		print("\n\tembrace 1")
 		node_address = self.find_node() # identify and record node location
+		print("\n\tembrace 2")
 		self.socket = self.setup(node_address) # instantiate socket and save to self
+		print("\n\tembrace 3")
 		self.identify_self() # identify self to node via socket
+		print("\n\tembrace 4")
 		self.receive_messages(own_inbox) # collect incoming messages and add to inbox
+		print("\n\tembrace 5")
 		self.send_messages(own_outbox) # send all outgoing messages from outbox
+		print("\n\tembrace 6")
 		self.close()
+		print("\n\tembrace 7")
