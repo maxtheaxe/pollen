@@ -1,0 +1,74 @@
+# pollen.im gui (main.kv) by max
+#:kivy 1.0.9
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+
+<ScreenManagement>:
+	transition: NoTransition()
+	HomeScreen:
+	InboxScreen:
+	OutboxScreen:
+	ComposeScreen:
+	ConversationScreen:
+	SettingsScreen:
+	SetupScreen:
+
+<HomeScreen>:
+	name: 'start'
+	BoxLayout:
+		orientation: 'vertical'
+		size_hint: (1, 1)
+		BoxLayout:
+			size_hint: (1, 0.15)
+			ImageButton:
+				id: inbox_button
+				source: 'images/inbox-white.png'
+				size_hint: (0.33, 1)
+				on_press: root.manager.current = 'inbox'
+			ImageButton:
+				id: outbox_button
+				source: 'images/outbox-white.png'
+				size_hint: (0.33, 1)
+				on_press: root.manager.current = 'outbox'
+			ImageButton:
+				id: settings_button
+				source: 'images/settings-white.png'
+				size_hint: (0.33, 1)
+				on_press: root.manager.current = 'settings'
+		ContentBox: 
+			viewclass: 'Button'  # defines the viewtype for the data items. 
+			orientation: "vertical"
+			size_hint: (1, 0.7)
+			spacing: 40
+			padding: 10, 10
+			space_x: self.size[0]/3  
+			RecycleBoxLayout: 
+				color:(0, 0.7, 0.4, 0.8) 
+				default_size: None, dp(56) 
+				# defines the size of the widget in reference to width and height 
+				default_size_hint: 1, None
+				size_hint_y: None
+				height: self.minimum_height
+				orientation: 'vertical' # defines the orientation of data items 
+		ImageButton:
+			id: compose_button
+			source: 'images/compose-white.png'
+			size_hint: (1, 0.15)
+			on_press: root.manager.current = 'compose'
+
+<ComposeScreen>:
+	name: 'compose'
+
+<ConversationScreen>:
+	name: 'convo'
+
+<InboxScreen>:
+	name: 'inbox'
+
+<OutboxScreen>:
+	name: 'outbox'
+
+<SettingsScreen>:
+	name: 'settings'
+
+<SetupScreen>:
+	name: 'setup'

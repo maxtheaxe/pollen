@@ -2,4 +2,7 @@
 # pgp_keys.asc
 __pycache__/
 run_node.bat
-scrap.py
+scrap.*
+# kivy stuff (might add later, not worth missing deadline for it)
+kivy_venv/
+requirements.txt
