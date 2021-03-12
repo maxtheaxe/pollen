@@ -12,6 +12,61 @@
 	SettingsScreen:
 	SetupScreen:
 
+<ConvoItem>:
+	orientation: 'horizontal'
+	size_hint: (1, 1)
+	# on_press: root.manager.current = 'convo'
+	Image:
+		size_hint: (0.2, 1)
+		source: 'images/contact.jpg'
+	Label:
+		size_hint: (0.6, 1)
+		text: 'contact x'
+		font_size: 30
+	Image:
+		size_hint: (0.2, 1)
+		source: 'images/arrow.png'
+
+<Message>:
+	orientation: 'horizontal'
+	size_hint: (1, 1)
+	sent: root.sent
+	BoxLayout:
+		size_hint: (0.2, 1)
+	Label:
+		size_hint: (0.8, 1)
+		text: 'contact x'
+		font_size: 30
+
+<MessageBox>:
+	orientation: 'vertical'
+	title: root.title
+	BoxLayout:
+		orientation: 'horizontal'
+		size_hint: (1, 0.15)
+		ImageButton:
+			size_hint: (0.2, 1)
+			source: 'images/back_arrow.png'
+		Label:
+			size_hint: (0.8, 1)
+			font_size: 30
+			text: root.title
+	ContentBox:
+		viewclass: 'Message'  # defines the viewtype for the data items. 
+		orientation: 'vertical'
+		size_hint: (1, 0.85)
+		spacing: 40
+		padding: 10, 10
+		space_x: self.size[0]/3  
+		RecycleBoxLayout: 
+			color:(0, 0.7, 0.4, 0.8) 
+			default_size: None, dp(56) 
+			# defines the size of the widget in reference to width and height 
+			default_size_hint: 1, None
+			size_hint_y: None
+			height: self.minimum_height
+			orientation: 'vertical' # defines the orientation of data items 
+
 <HomeScreen>:
 	name: 'start'
 	BoxLayout:
@@ -35,8 +90,8 @@
 				size_hint: (0.33, 1)
 				on_press: root.manager.current = 'settings'
 		ContentBox: 
-			viewclass: 'Button'  # defines the viewtype for the data items. 
-			orientation: "vertical"
+			viewclass: 'ConvoItem'  # defines the viewtype for the data items. 
+			orientation: 'vertical'
 			size_hint: (1, 0.7)
 			spacing: 40
 			padding: 10, 10
@@ -60,9 +115,13 @@
 
 <ConversationScreen>:
 	name: 'convo'
+	MessageBox:
+		# test
 
 <InboxScreen>:
 	name: 'inbox'
+	MessageBox:
+		title: 'Inbox'
 
 <OutboxScreen>:
 	name: 'outbox'

@@ -12,9 +12,11 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.behaviors import ButtonBehavior
-from kivy.properties import ObjectProperty, BooleanProperty
+from kivy.properties import StringProperty
 from kivy.uix.recycleview import RecycleView
-
+# changing window size: https://stackoverflow.com/a/51809114/4513452
+from kivy.core.window import Window
+Window.size = (375, 667)
 
 # create helper widgets
 class ImageButton(ButtonBehavior, Image):
@@ -25,12 +27,38 @@ class NamedImageButton(ImageButton):
 	def __init__(self, iname, **kwargs):
 		super(ImageButton, self).__init__(**kwargs)
 		self.iname = iname
+class BoxButton(ButtonBehavior, BoxLayout):
+	'''a box layout that also allows onpress events'''
+	pass
+class ConvoItem(BoxButton):
+	'''a mini preview version of a conversation'''
+	pass
+class Message(BoxButton):
+	'''parent message type'''
+	pass
+class ClearMessage(Message):
+	'''plaintext view of message'''
+	pass
+class InMessage(Message):
+	'''inbox view of message'''
+	pass
+class OutMessage(Message):
+	'''outbox view of message'''
+	pass
 class ContentBox(RecycleView):
 	'''box that contains a scrollable section of content (either messages or conversations)'''
 	# ref: https://www.geeksforgeeks.org/python-recycleview-in-kivy/
 	def __init__(self, **kwargs): 
 		super(ContentBox, self).__init__(**kwargs)
-		self.data = [{'text': str(x)} for x in range(20)] 
+		self.data = [{'text': str(x)} for x in range(20)]
+class MessageBox(BoxLayout):
+	'''basic building block for message boxes'''
+	# if i want to use this widget elsewhere and pass in a property at instantiation
+	# need to define a kivy property as such:
+	title = StringProperty('') # blank string is default
+	# by default, it doesn't wipe old value--prob need to add func to do so,
+	# but dynamic updating isn't necessary here
+	pass
 
 # create different screens
 class HomeScreen(Screen):
