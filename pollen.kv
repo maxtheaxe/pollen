@@ -15,7 +15,7 @@
 <ConvoItem>:
 	orientation: 'horizontal'
 	size_hint: (1, 1)
-	# on_press: root.manager.current = 'convo'
+	on_press: root.parent.parent.parent.parent.manager.current = 'convo' # swap screens
 	Image:
 		size_hint: (0.2, 1)
 		source: 'images/contact.jpg'
@@ -23,7 +23,7 @@
 		size_hint: (0.6, 1)
 		text: 'contact x'
 		font_size: 30
-	Image:
+	ImageButton:
 		size_hint: (0.2, 1)
 		source: 'images/arrow.png'
 
@@ -38,15 +38,30 @@
 		text: 'contact x'
 		font_size: 30
 
+# needs to be fixed and dropped into non-homescreens
+<HeaderBar>:
+	orientation: 'horizontal'
+	# size_hint: (1, 0.15)
+	title: root.title
+	ImageButton: # back button
+		size_hint: (0.2, 1)
+		source: 'images/back_arrow.png'
+		on_press: root.parent.parent.manager.current = 'home'
+	Label:
+		size_hint: (0.8, 1)
+		font_size: 30
+		text: root.title
+
 <MessageBox>:
 	orientation: 'vertical'
 	title: root.title
-	BoxLayout:
+	BoxLayout: # header bar
 		orientation: 'horizontal'
 		size_hint: (1, 0.15)
-		ImageButton:
+		ImageButton: # back button
 			size_hint: (0.2, 1)
 			source: 'images/back_arrow.png'
+			on_press: root.parent.manager.current = 'home'
 		Label:
 			size_hint: (0.8, 1)
 			font_size: 30
@@ -58,7 +73,7 @@
 		spacing: 40
 		padding: 10, 10
 		space_x: self.size[0]/3  
-		RecycleBoxLayout: 
+		RecycleBoxLayout:
 			color:(0, 0.7, 0.4, 0.8) 
 			default_size: None, dp(56) 
 			# defines the size of the widget in reference to width and height 
@@ -68,7 +83,7 @@
 			orientation: 'vertical' # defines the orientation of data items 
 
 <HomeScreen>:
-	name: 'start'
+	name: 'home'
 	BoxLayout:
 		orientation: 'vertical'
 		size_hint: (1, 1)
@@ -103,7 +118,7 @@
 				default_size_hint: 1, None
 				size_hint_y: None
 				height: self.minimum_height
-				orientation: 'vertical' # defines the orientation of data items 
+				orientation: 'vertical' # defines the orientation of data items
 		ImageButton:
 			id: compose_button
 			source: 'images/compose-white.png'
@@ -112,11 +127,30 @@
 
 <ComposeScreen>:
 	name: 'compose'
+	BoxLayout:
+		orientation: 'vertical'
+		size_hint: (1, 1)
+		HeaderBar:
+			title: 'Compose'
+			size_hint: (1, 0.15)
+		BoxLayout:
+			size_hint: (1, 0.85)
+			orientation: 'vertical'
+			TextInput:
+				size_hint: (1, 0.125)
+				suggestion_text: 'Recipient PGP Key'
+				font_size: 30
+			TextInput:
+				size_hint: (1, 0.75)
+			BoxButton:
+				size_hint: (1, 0.125)
+				Label:
+					text: 'Send'
 
 <ConversationScreen>:
 	name: 'convo'
 	MessageBox:
-		# test
+		title: 'Chat'
 
 <InboxScreen>:
 	name: 'inbox'
@@ -125,9 +159,32 @@
 
 <OutboxScreen>:
 	name: 'outbox'
+	MessageBox:
+		title: 'Outbox'
 
 <SettingsScreen>:
 	name: 'settings'
+	BoxLayout:
+		orientation: 'vertical'
+		size_hint: (1, 1)
+		HeaderBar:
+			title: 'Settings'
+			size_hint: (1, 0.15)
+		ContentBox: 
+			viewclass: 'Label'  # defines the viewtype for the data items. 
+			orientation: 'vertical'
+			size_hint: (1, 0.7)
+			spacing: 40
+			padding: 10, 10
+			space_x: self.size[0]/3  
+			RecycleBoxLayout: 
+				color:(0, 0.7, 0.4, 0.8) 
+				default_size: None, dp(56) 
+				# defines the size of the widget in reference to width and height 
+				default_size_hint: 1, None
+				size_hint_y: None
+				height: self.minimum_height
+				orientation: 'vertical' # defines the orientation of data items 
 
 <SetupScreen>:
 	name: 'setup'

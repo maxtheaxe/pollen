@@ -45,6 +45,10 @@ class InMessage(Message):
 class OutMessage(Message):
 	'''outbox view of message'''
 	pass
+class HeaderBar(BoxLayout):
+	'''box that contains a back button and screen title'''
+	title = StringProperty('') # blank string is default
+	pass
 class ContentBox(RecycleView):
 	'''box that contains a scrollable section of content (either messages or conversations)'''
 	# ref: https://www.geeksforgeeks.org/python-recycleview-in-kivy/
@@ -72,6 +76,7 @@ class InboxScreen(ConversationScreen):
 class OutboxScreen(ConversationScreen):
 	pass
 class SettingsScreen(Screen):
+	title = StringProperty('') # blank string is default
 	pass
 class SetupScreen(Screen):
 	pass
