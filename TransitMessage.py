@@ -59,6 +59,24 @@ class TransitMessage:
 			sent = True
 		return LocalMessage(contents, peer, sent)
 
+	def __getstate__(self):
+		'''helper method that allows this class to be pickled'''
+		# ref: https://stackoverflow.com/a/41754104
+		pickled_self = {
+			'pgp_message' : str(self.pgp_message),
+			'sender' : str(self.sender),
+			'recipient' : str(self.recipient)
+		}
+		return pickled_self
+
+	def __setstate__(self, pickled_self):
+		'''helper method that allows this class to be unpickled'''
+		# https://pgpy.readthedocs.io/en/latest/api.html#pgpy.PGPKey.from_blob
+		self.pgp_message = pgpy.PGPMessage.from_blob(pickled_self['pgp_message'])
+		self.sender, _ = pgpy.PGPKey.from_blob(pickled_self['sender'])
+		self.recipient, _ = pgpy.PGPKey.from_blob(pickled_self['recipient'])
+		return
+
 if __name__ == '__main__':
 	# test code from LocalMessage (surely there's a better way, sorry)
 	message = "hey, do messages work?"
@@ -68,8 +86,17 @@ if __name__ == '__main__':
 	new_message = LocalMessage(message, peer, sent)
 	# prepped_message = new_message.prep(password)
 	# print("type: ", type(prepped_message))
-	# make new TransitMessage using LocalMessage
-	new_transit = TransitMessage(new_message, password)
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_transit'
+	og_init = " = " + "TransitMessage(new_message, password)"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
+	# # make new TransitMessage using LocalMessage
+	# new_transit = TransitMessage(new_message, password)
 	jsonified_transit = new_transit.jsonify()
 	print("jsonified_transit type: ", type(jsonified_transit))
 	print( jsonified_transit )
