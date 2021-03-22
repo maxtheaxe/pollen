@@ -4,7 +4,7 @@ import json
 
 class OutboxMessage(TransitMessage):
 	'''numbered version of TransitMessage for keeping track of times message was sent'''
-	def __init__(self, local_message = None, password = None, deliveries = None,
+	def __init__(self, local_message = None, password = None, deliveries = 10,
 					jsonified_transit = None, transit_message = None):
 		# needed args to create from local message
 		local_args = [local_message, password, deliveries]
@@ -41,3 +41,24 @@ class OutboxMessage(TransitMessage):
 	def check_remaining(self):
 		'''returns remaining deliveries'''
 		return self.deliveries
+
+if __name__ == '__main__':
+	from Pocket import Pocket
+	from LocalMessage import LocalMessage
+	# test code from LocalMessage (surely there's a better way, sorry)
+	message = "hey, do messages work?"
+	password = "fake_password"
+	peer = Pocket().public_key() # pubkey from local dir
+	sent = False
+	new_message = LocalMessage(message, peer, sent)
+	# prepped_message = new_message.prep(password)
+	# print("type: ", type(prepped_message))
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_outbox_message'
+	og_init = " = " + "OutboxMessage(new_message, password)"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
