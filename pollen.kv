@@ -15,13 +15,15 @@
 <ConvoItem>:
 	orientation: 'horizontal'
 	size_hint: (1, 1)
+	contact_name: ''
 	on_press: root.parent.parent.parent.parent.manager.current = 'convo' # swap screens
 	Image:
 		size_hint: (0.2, 1)
 		source: 'images/contact.jpg'
 	Label:
 		size_hint: (0.6, 1)
-		text: 'contact x'
+		# text: root.parent.text
+		text: root.contact_name
 		font_size: 30
 	Image:
 		size_hint: (0.2, 1)
@@ -31,11 +33,12 @@
 	orientation: 'horizontal'
 	size_hint: (1, 1)
 	# sent: root.sent
+	message_text: ''
 	BoxLayout:
 		size_hint: (0.2, 1)
 	Label:
 		size_hint: (0.8, 1)
-		text: 'contact x'
+		text: root.message_text
 		font_size: 30
 
 # needs to be fixed and dropped into non-homescreens

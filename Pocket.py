@@ -90,6 +90,7 @@ class Pocket:
 	def __setstate__(self, pickled_self):
 		'''helper method that allows this class to be unpickled'''
 		self.key, _ = pgpy.PGPKey.from_blob(pickled_self)
+		# print("key:\n", self.key)
 		return
 
 if __name__ == '__main__':

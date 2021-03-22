@@ -61,11 +61,12 @@ class Client:
 
 	def __setstate__(self, pickled_self):
 		'''helper method that allows this class to be unpickled'''
-		self.pocket = pickle.loads(pickled_self['pocket']),
-		self.conversation_manager = pickle.loads(pickled_self['conversation_manager']),
-		self.inbox = pickle.loads(pickled_self['inbox']),
-		self.outbox = pickle.loads(pickled_self['outbox']),
-		self.password = pickled_self['password'], # gotta fix this crap
+		# print("pocket:\n", pickled_self['pocket'])
+		self.pocket = pickle.loads(pickled_self['pocket'])
+		self.conversation_manager = pickle.loads(pickled_self['conversation_manager'])
+		self.inbox = pickle.loads(pickled_self['inbox'])
+		self.outbox = pickle.loads(pickled_self['outbox'])
+		self.password = pickled_self['password'] # gotta fix this crap
 		self.version = pickled_self['version']
 		return
 
@@ -89,17 +90,18 @@ if __name__ == '__main__':
 	# compose new message
 	client_instance.compose_message(my_pubkey, message_body)
 	print("\n\tinbox num messages: ", client_instance.inbox.count_messages())
-	# embrace node and exchange messages
-	print("\n\tconnecting to node...")
-	client_instance.update_messages()
-	print("\n\tdone")
-	# wait 15 seconds
-	print("\n\tsleeping 5 seconds...")
-	time.sleep(5)
-	# embrace node and exchange messages again
-	print("\n\tconnecting to node again...")
-	client_instance.update_messages()
-	print("\n\tdone")
+	pr.pickle_it(var_name, eval(var_name)) # updates pickle of instance
+	# # embrace node and exchange messages
+	# print("\n\tconnecting to node...")
+	# client_instance.update_messages()
+	# print("\n\tdone")
+	# # wait 15 seconds
+	# print("\n\tsleeping 5 seconds...")
+	# time.sleep(5)
+	# # embrace node and exchange messages again
+	# print("\n\tconnecting to node again...")
+	# client_instance.update_messages()
+	# print("\n\tdone")
 	# check final status of own boxes
 	print("\n\tinbox num messages: ", client_instance.inbox.count_messages())
 	print("\n\toutbox num messages: ", client_instance.outbox.count_messages())
