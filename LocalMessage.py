@@ -1,6 +1,7 @@
 import pgpy
 from datetime import datetime
 from Pocket import Pocket
+import json
 
 class LocalMessage:
 	'''storage format of all local messages'''
@@ -47,14 +48,46 @@ class LocalMessage:
 		encrypted_message = self.peer.encrypt(signed_message)
 		return encrypted_message
 
+	def __getstate__(self):
+		'''helper method that allows this class to be pickled'''
+		# ref: https://stackoverflow.com/a/41754104
+		pickled_self = {
+			'message' : self.message,
+			'peer' : str(self.peer), # stringify the key!
+			'sent' : self.sent,
+			'inception' : self.inception.strftime("%Y.%m.%d.%H.%M.%S")
+		}
+		return pickled_self
+
+	def __setstate__(self, pickled_self):
+		'''helper method that allows this class to be unpickled'''
+		self.message = pickled_self['message']
+		self.peer, _ = pgpy.PGPKey.from_blob(pickled_self['peer'])
+		self.sent = pickled_self['sent']
+		pd = pickled_self['inception'].split('.') # parsed datetime
+		self.inception = datetime(int(pd[0]), int(pd[1]), int(pd[2]), 
+			int(pd[3]), int(pd[4]), int(pd[5]))
+		return
+
 if __name__ == '__main__':
+	# message data
 	message = "hey, do messages work?"
 	password = "fake_password"
+	sent = False
 	# peer = pgpy.PGPKey.from_file("pgp_keys.asc") # pubkey from local dir
 	peer = Pocket().public_key() # pubkey from local dir
-	print("type: ", type(peer))
-	sent = False
-	new_message = LocalMessage(message, peer, sent)
+	# print("state: ", peer.__getstate__())
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_message'
+	og_init = " = " + "LocalMessage(message, peer, sent)"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
+	# new_message.__getstate__()
+	# print("type: ", type(peer))
 	print(new_message)
 	prepped_message = new_message.prep(password)
 	print(prepped_message)
