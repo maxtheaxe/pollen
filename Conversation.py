@@ -44,7 +44,7 @@ class Conversation(MessageBox):
 		'''helper method that allows this class to be pickled'''
 		# ref: https://stackoverflow.com/a/41754104
 		pickled_self = {
-			'messages' : str(self.messages),
+			'messages' : self.messages,
 			'friendly_name' : str(self.friendly_name),
 			'peer' : str(self.peer)
 		}

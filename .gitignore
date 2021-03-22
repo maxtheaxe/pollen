@@ -2,7 +2,11 @@
 # pgp_keys.asc
 __pycache__/
 run_node.bat
-scrap.*
+scrap*
+*.db
+*.pickle
+shelf*
+# backend stuff
+backend_venv/
 # kivy stuff (might add later, not worth missing deadline for it)
 kivy_venv/
-requirements.txt

@@ -5,6 +5,7 @@ from Outbox import Outbox
 from LocalMessage import LocalMessage
 from TransitMessage import TransitMessage
 from Grapple import Grapple
+import pickle
 
 class Client:
 	'''manages all functions of user'''
@@ -43,17 +44,45 @@ class Client:
 		# sort messages just received and stored in inbox
 		self.inbox.sort_messages(self.outbox, self.conversation_manager, self.password)
 
-	def dump_data(self):
-		'''basic data persistence via pickling entire self'''
-		# will probably cause problems bc pickle doesn't like pgp objects
+	def __getstate__(self):
+		'''helper method that allows this class to be pickled'''
+		# ref: https://stackoverflow.com/a/41754104
+		# should verify that this is an acceptible usage,
+		# but pickle should also be replaced altogether
+		pickled_self = {
+			'pocket' : pickle.dumps(self.pocket),
+			'conversation_manager' : pickle.dumps(self.conversation_manager),
+			'inbox' : pickle.dumps(self.inbox),
+			'outbox' : pickle.dumps(self.outbox),
+			'password' : self.password, # gotta fix this crap
+			'version' : self.version
+		}
+		return pickled_self
+
+	def __setstate__(self, pickled_self):
+		'''helper method that allows this class to be unpickled'''
+		self.pocket = pickle.loads(pickled_self['pocket']),
+		self.conversation_manager = pickle.loads(pickled_self['conversation_manager']),
+		self.inbox = pickle.loads(pickled_self['inbox']),
+		self.outbox = pickle.loads(pickled_self['outbox']),
+		self.password = pickled_self['password'], # gotta fix this crap
+		self.version = pickled_self['version']
 		return
 
 if __name__ == '__main__':
 	import time
 	# announce self running
 	print("\n\tPollen Client Now Running...")
-	# potentially load pickled version of old client later
-	client_instance = Client()
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'client_instance'
+	og_init = " = " + "Client()"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
+	# client_instance = Client()
 	# message details
 	my_pubkey = client_instance.pocket.public_key()
 	message_body = "this is the first message ever sent using pollen.im"

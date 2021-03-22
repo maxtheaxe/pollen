@@ -122,3 +122,14 @@ class Grapple:
 		self.send_messages(own_outbox) # send all outgoing messages from outbox
 		self.receive_messages(own_inbox) # collect incoming messages and add to inbox
 		self.close()
+
+if __name__ == '__main__':
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_grapple'
+	og_init = " = " + "Grapple()"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))

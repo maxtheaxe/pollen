@@ -28,11 +28,20 @@ class MessageBox:
 		return len(self.messages)
 
 if __name__ == '__main__':
-	# import pgpy
-	new_box = MessageBox([])
+	import pgpy
+	# new_box = MessageBox([])
 	message = "hey, do messages work?"
 	password = "fake_password"
 	peer, _ = pgpy.PGPKey.from_file("other_pub.asc") # pubkey from local dir
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_box'
+	og_init = " = " + "MessageBox([])"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
 	print("type: ", type(peer))
 	sent = False
 	new_message = LocalMessage(message, peer, sent)

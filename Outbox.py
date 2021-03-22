@@ -39,7 +39,16 @@ class Outbox(MessageBox):
 		return final_message
 
 if __name__ == '__main__':
-	new_box = Outbox([])
+	# new_box = Outbox([])
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_box'
+	og_init = " = " + "Outbox([])"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
 	message = "hey, do messages work?"
 	password = "fake_password"
 	peer, _ = pgpy.PGPKey.from_file("other_pub.asc") # pubkey from local dir

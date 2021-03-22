@@ -21,3 +21,14 @@ class ConversationManager:
 	def count_conversations(self):
 		'''returns integer num conversations being managed'''
 		return len(self.conversations)
+
+if __name__ == '__main__':
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_convo_mgr'
+	og_init = " = " + "ConversationManager()"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))

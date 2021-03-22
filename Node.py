@@ -72,10 +72,35 @@ class Node:
 			# print("nodebox len: ", self.nodebox.count_messages())
 			# finished embrace with user, wait for next one
 
+	def __getstate__(self):
+		'''helper method that allows this class to be pickled'''
+		# ref: https://stackoverflow.com/a/41754104
+		pickled_self = {
+			'nodebox' : self.nodebox,
+			'version' : self.version
+		}
+		return pickled_self
+
+	def __setstate__(self, pickled_self):
+		'''helper method that allows this class to be unpickled'''
+		self.nodebox = pickled_self['nodebox']
+		self.socket = self.setup_socket()
+		self.version = pickled_self['version']
+		return
+
 if __name__ == '__main__':
 	# announce self running
 	print("\n\t        Pollen Node Online        ")
 	# potentially load pickled version of old node later
-	node_instance = Node()
+	# node_instance = Node()
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'node_instance'
+	og_init = " = " + "Node()"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
 	# start monitoring socket indefinitely
 	node_instance.socket_message_monitor()

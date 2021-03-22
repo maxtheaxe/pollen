@@ -81,6 +81,17 @@ class Pocket:
 		with self.key.unlock(password): # using password to unlock priv key
 			return self.key.decrypt(message).message # return decrypted *contents*
 
+	def __getstate__(self):
+		'''helper method that allows this class to be pickled'''
+		# ref: https://stackoverflow.com/a/41754104
+		# need to get rid of this AND current init save method
+		return str(self.key)
+
+	def __setstate__(self, pickled_self):
+		'''helper method that allows this class to be unpickled'''
+		self.key, _ = pgpy.PGPKey.from_blob(pickled_self)
+		return
+
 if __name__ == '__main__':
 	filename = "pollen_key.asc"
 	password = "fake_password"

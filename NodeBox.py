@@ -69,7 +69,16 @@ class NodeBox(MessageBox):
 if __name__ == '__main__':
 	max_messages = 5
 	messages = ["a", "b", "c", "d", "e", "f", "g", "h", "i"]
-	new_nodebox = NodeBox(messages, max_messages)
+	# new_nodebox = NodeBox(messages, max_messages)
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_nodebox'
+	og_init = " = " + "NodeBox(messages, max_messages)"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
 	# collected_messages = new_nodebox.collect_messages("lmao")
 	# print("collected messages: ", collected_messages)
 	new_nodebox.prune_messages()
