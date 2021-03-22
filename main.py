@@ -53,7 +53,7 @@ class ConvoItem(BoxButton):
 class Message(BoxButton):
 	'''parent message type'''
 	message_text = StringProperty('') # blank string is default
-	sent = StringProperty('') # blank string is default
+	sent = BooleanProperty(True) # blank string is default
 	pass
 class ClearMessage(Message):
 	'''plaintext view of message'''
@@ -68,17 +68,29 @@ class HeaderBar(BoxLayout):
 	'''box that contains a back button and screen title'''
 	title = StringProperty('') # blank string is default
 	pass
-class ContentBox(RecycleView):
+# class ContentBox(RecycleView):
+# 	'''box that contains a scrollable section of content (either messages or conversations)'''
+# 	# ref: https://www.geeksforgeeks.org/python-recycleview-in-kivy/
+# 	def __init__(self, **kwargs): 
+# 		super(ContentBox, self).__init__(**kwargs)
+# 		self.data = []
+# 		global client_instance
+# 		for contact in client_instance.conversation_manager.conversations:
+# 			friendly_name = client_instance.conversation_manager.conversations[contact].friendly_name
+# 			self.data.append({'contact_name': friendly_name, 'contact': contact})
+class ConvoBox(RecycleView):
 	'''box that contains a scrollable section of content (either messages or conversations)'''
 	# ref: https://www.geeksforgeeks.org/python-recycleview-in-kivy/
 	def __init__(self, **kwargs): 
-		super(ContentBox, self).__init__(**kwargs)
+		super(ConvoBox, self).__init__(**kwargs)
 		self.data = []
 		global client_instance
 		for contact in client_instance.conversation_manager.conversations:
 			friendly_name = client_instance.conversation_manager.conversations[contact].friendly_name
 			self.data.append({'contact_name': friendly_name, 'contact': contact})
-class MessageBox(BoxLayout):
+class MessageBoxHeader(BoxLayout):
+	pass
+class MessageBox(RecycleView):
 	'''basic building block for message boxes'''
 	# if i want to use this widget elsewhere and pass in a property at instantiation
 	# need to define a kivy property as such:
@@ -95,7 +107,7 @@ class MessageBox(BoxLayout):
 			test_contact = client_instance.conversation_manager.conversations[contact]
 		for message_item in test_contact.messages:
 			self.data.append({'message_text': message_item.message, 'sent': message_item.sent})
-			print("message text: ", message_item.message)
+			# print("message text: ", message_item.message)
 		return
 
 # create different screens

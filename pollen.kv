@@ -37,15 +37,18 @@
 	BoxLayout:
 		size_hint: (0.2, 1)
 	Label:
-		size_hint: (0.8, 1)
 		text: root.message_text
-		font_size: 30
+		# size_hint: (0.8, 1)
+		# font_size: 15
+		size_hint_y: None
+		text_size: self.width, None
+		height: self.texture_size[1]
 
 # needs to be fixed and dropped into non-homescreens
 <HeaderBar>:
 	orientation: 'horizontal'
-	# size_hint: (1, 0.15)
-	title: root.title
+	size_hint: (1, 0.15)
+	title: root.parent.parent.title
 	ImageButton: # back button
 		size_hint: (0.2, 1)
 		source: 'images/back_arrow.png'
@@ -56,34 +59,20 @@
 		text: root.title
 
 <MessageBox>:
+	viewclass: 'Message'  # defines the viewtype for the data items. 
 	orientation: 'vertical'
-	title: root.title
-	BoxLayout: # header bar
-		orientation: 'horizontal'
-		size_hint: (1, 0.15)
-		ImageButton: # back button
-			size_hint: (0.2, 1)
-			source: 'images/back_arrow.png'
-			on_press: root.parent.manager.current = 'home'
-		Label:
-			size_hint: (0.8, 1)
-			font_size: 30
-			text: root.title
-	ContentBox:
-		viewclass: 'Message'  # defines the viewtype for the data items. 
-		orientation: 'vertical'
-		size_hint: (1, 0.85)
-		spacing: 40
-		padding: 10, 10
-		space_x: self.size[0]/3  
-		RecycleBoxLayout:
-			color:(0, 0.7, 0.4, 0.8) 
-			default_size: None, dp(56) 
-			# defines the size of the widget in reference to width and height 
-			default_size_hint: 1, None
-			size_hint_y: None
-			height: self.minimum_height
-			orientation: 'vertical' # defines the orientation of data items 
+	size_hint: (1, 0.85)
+	spacing: 40
+	padding: 10, 10
+	space_x: self.size[0]/3  
+	RecycleBoxLayout:
+		color:(0, 0.7, 0.4, 0.8) 
+		default_size: None, dp(56) 
+		# defines the size of the widget in reference to width and height 
+		default_size_hint: 1, None
+		size_hint_y: None
+		height: self.minimum_height
+		orientation: 'vertical' # defines the orientation of data items 
 
 <HomeScreen>:
 	name: 'home'
@@ -107,7 +96,7 @@
 				source: 'images/settings-white.png'
 				size_hint: (0.33, 1)
 				on_press: root.manager.current = 'settings'
-		ContentBox: 
+		ConvoBox: 
 			viewclass: 'ConvoItem'  # defines the viewtype for the data items. 
 			orientation: 'vertical'
 			size_hint: (1, 0.7)
@@ -130,11 +119,12 @@
 
 <ComposeScreen>:
 	name: 'compose'
+	title: 'Compose'
 	BoxLayout:
 		orientation: 'vertical'
 		size_hint: (1, 1)
 		HeaderBar:
-			title: 'Compose'
+			# title: 'Compose'
 			size_hint: (1, 0.15)
 		BoxLayout:
 			size_hint: (1, 0.85)
@@ -152,18 +142,31 @@
 
 <ConversationScreen>:
 	name: 'convo'
-	MessageBox:
-		title: 'Chat'
+	title: 'Chat'
+	BoxLayout:
+		size_hint: (1, 1)
+		orientation: 'vertical'
+		HeaderBar:
+		MessageBox:
 
 <InboxScreen>:
 	name: 'inbox'
-	MessageBox:
-		title: 'Inbox'
+	title: 'Inbox'
+	BoxLayout:
+		size_hint: (1, 1)
+		orientation: 'vertical'
+		HeaderBar:
+		MessageBox:
 
 <OutboxScreen>:
 	name: 'outbox'
-	MessageBox:
-		title: 'Outbox'
+	title: 'Outbox'
+	BoxLayout:
+		size_hint: (1, 1)
+		orientation: 'vertical'
+		HeaderBar:
+		MessageBox:
+		
 
 <SettingsScreen>:
 	name: 'settings'
@@ -173,7 +176,7 @@
 		HeaderBar:
 			title: 'Settings'
 			size_hint: (1, 0.15)
-		ContentBox: 
+		RecycleView: 
 			viewclass: 'Label'  # defines the viewtype for the data items. 
 			orientation: 'vertical'
 			size_hint: (1, 0.7)
