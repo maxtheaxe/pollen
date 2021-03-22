@@ -40,5 +40,34 @@ class Conversation(MessageBox):
 		'''returns most recent message in conversation'''
 		return self.messages[-1]
 
+	def __getstate__(self):
+		'''helper method that allows this class to be pickled'''
+		# ref: https://stackoverflow.com/a/41754104
+		pickled_self = {
+			'messages' : str(self.messages),
+			'friendly_name' : str(self.friendly_name),
+			'peer' : str(self.peer)
+		}
+		return pickled_self
+
+	def __setstate__(self, pickled_self):
+		'''helper method that allows this class to be unpickled'''
+		self.messages = pickled_self['messages']
+		self.friendly_name = pickled_self['friendly_name']
+		self.peer, _ = pgpy.PGPKey.from_blob(pickled_self['peer'])
+		return
+
 if __name__ == '__main__':
-	pass
+	import pgpy
+	message = "hey, do messages work?"
+	password = "fake_password"
+	peer, _ = pgpy.PGPKey.from_file("other_pub.asc") # pubkey from local dir
+	# pickle testing (just for testing which types have pickle issues)
+	import pickler as pr
+	var_name = 'new_convo'
+	og_init = " = " + "Conversation(peer)"
+	if pr.is_pickled(var_name):
+		exec(var_name + " = pr.get_pickled(var_name)")
+	else:
+		exec(var_name + og_init)
+		pr.pickle_it(var_name, eval(var_name))
