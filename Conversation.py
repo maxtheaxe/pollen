@@ -11,14 +11,14 @@ class Conversation(MessageBox):
 		self.peer = peer # pgp key of other user in conversation
 
 	def create_name(self, pgp_key):
-		'''returns first 8 character-long alpha sequence from given pgp key'''
+		'''returns 8 character-long alpha-numeric sequence from given pgp key'''
 		# https://www.programiz.com/python-programming/regex#python-regex
-		pattern = '[a-zA-Z]{8}'
+		pattern = '[a-zA-Z0-9]{25}'
 		name_found = re.search(pattern, str(pgp_key)) # search for usable sequence
 		if (not name_found): # if no usable sequence was found
 			random_name = "new_peer" # just use "new_peer" instead
 		else:
-			random_name = name_found.group() # grab the usable sequence
+			random_name = name_found.group()[17:25] # grab the usable sequence
 		return random_name
 
 	def get_name(self):
