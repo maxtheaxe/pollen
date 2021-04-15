@@ -72,6 +72,7 @@ class Client:
 
 if __name__ == '__main__':
 	import time
+	import pgpy
 	# announce self running
 	print("\n\tPollen Client Now Running...")
 	# pickle testing (just for testing which types have pickle issues)
@@ -85,8 +86,9 @@ if __name__ == '__main__':
 		pr.pickle_it(var_name, eval(var_name))
 	# client_instance = Client()
 	# message details
-	my_pubkey = client_instance.pocket.public_key()
-	message_body = "this is the first message ever sent using pollen.im"
+	# my_pubkey = client_instance.pocket.public_key()
+	my_pubkey, _ = pgpy.PGPKey.from_file('public_second_pollen_key.asc')
+	message_body = "this is a second message key sent using pollen.im"
 	# compose new message
 	client_instance.compose_message(my_pubkey, message_body)
 	print("\n\tinbox num messages: ", client_instance.inbox.count_messages())

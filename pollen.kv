@@ -16,7 +16,8 @@
 	orientation: 'horizontal'
 	size_hint: (1, 1)
 	contact_name: ''
-	on_press: root.parent.parent.parent.parent.manager.current = 'convo' # swap screens
+	# on_press: root.parent.parent.parent.parent.manager.current = 'convo' # swap screens
+	on_press: root.select_convo() # swap screens
 	Image:
 		size_hint: (0.2, 1)
 		source: 'images/contact.jpg'
@@ -143,11 +144,14 @@
 <ConversationScreen>:
 	name: 'convo'
 	title: 'Chat'
+	message_box: message_box
 	BoxLayout:
+		# message_box: message_box # not sure how to add for grandchild
 		size_hint: (1, 1)
 		orientation: 'vertical'
 		HeaderBar:
 		MessageBox:
+			id: message_box
 
 <InboxScreen>:
 	name: 'inbox'
