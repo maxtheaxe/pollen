@@ -295,6 +295,7 @@ class ConversationScreen(BoxScreen):
 
 	def set_contact(self, contact):
 		self.message_box.set_contact(contact)
+		self.title = self.create_name(contact)
 		self.contact = contact
 		return
 
@@ -303,6 +304,17 @@ class ConversationScreen(BoxScreen):
 		self.manager.screens[3].ids.recipient_key.text = self.contact # pass peer key
 		self.manager.current = 'compose'
 		return
+
+	def create_name(self, pgp_key):  # review: double duplicate from Conversation class, improve
+		'''returns 8 character-long alpha-numeric sequence from given pgp key'''
+		# https://www.programiz.com/python-programming/regex#python-regex
+		pattern = '[a-zA-Z0-9]{25}'
+		name_found = re.search(pattern, str(pgp_key))  # search for usable sequence
+		if (not name_found):  # if no usable sequence was found
+			random_name = "new_peer"  # just use "new_peer" instead
+		else:
+			random_name = name_found.group()[17:25]  # grab the usable sequence
+		return random_name
 
 	pass
 
