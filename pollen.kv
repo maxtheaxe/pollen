@@ -135,14 +135,18 @@
 		BoxLayout:
 			size_hint: (1, 0.85)
 			orientation: 'vertical'
-			TextInput:
+			HighlightTextInput:
+			    id: recipient_key
 				size_hint: (1, 0.125)
-				suggestion_text: 'Recipient PGP Key'
-				font_size: 30
+				hint_text: 'Recipient PGP Key'
+				font_size: 20
 			TextInput:
+			    id: message_body
+			    hint_text: 'Message Body'
 				size_hint: (1, 0.75)
 			BoxButton:
 				size_hint: (1, 0.125)
+				on_press: self.parent.parent.parent.send_message(recipient_key.text, message_body.text)
 				Label:
 					text: 'Send'
 

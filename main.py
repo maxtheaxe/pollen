@@ -16,6 +16,7 @@ from kivy.uix.checkbox import CheckBox
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.properties import StringProperty, BooleanProperty, ObjectProperty
 from kivy.uix.recycleview import RecycleView
+from kivy.clock import Clock
 # changing window size: https://stackoverflow.com/a/51809114/4513452
 from kivy.core.window import Window
 
@@ -36,6 +37,14 @@ class NamedImageButton(ImageButton):
 		super(ImageButton, self).__init__(**kwargs)
 		self.iname = iname
 
+	pass
+
+class HighlightTextInput(TextInput):
+	'''TextInput box that highlights all contents when pressed'''
+	# ref: https://stackoverflow.com/a/51453778
+	def on_touch_down(self, touch):
+		Clock.schedule_once(lambda dt: self.select_all())
+		TextInput.on_touch_down(self, touch)
 	pass
 
 
@@ -210,13 +219,29 @@ class HomeScreen(Screen):
 	def refresh(self):
 		'''update messages in client, then save state'''
 		self.client_instance.update_messages()  # exchange messages with node, if possible
-		# dump self
+		self.save_state() # dump self
+		return
+
+	def save_state(self):
+		'''save serialized version (pickle) of self as form of basic persistence'''
+		with open("client_instance.pickle", 'wb') as pfile:
+			pickle.dump(self.client_instance, pfile)  # dump current instance for later
 		return
 
 	pass
 
 
 class ComposeScreen(Screen):
+	def send_message(self, recipient_key, message_body):
+		'''send new message with given inputs'''
+		try:
+			self.manager.screens[0].client_instance.compose_message(recipient_key, message_body)
+			self.manager.screens[0].save_state()
+			self.manager.current = 'home' # message sent, return to home screen
+		except: # invalid pgp key for recipient
+			self.ids.recipient_key.text = ""
+			self.ids.recipient_key.hint_text = "invalid recipient--please retry"
+		return
 	pass
 
 

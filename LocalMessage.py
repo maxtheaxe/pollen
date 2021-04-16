@@ -7,7 +7,11 @@ class LocalMessage:
 	'''storage format of all local messages'''
 	def __init__(self, message, peer, sent):
 		self.message = message # plaintext message body
-		self.peer = peer # public key of other person
+		print
+		if type(peer) == str:
+			self.peer, _ = pgpy.PGPKey.from_blob(peer) # parse PGP key if given as str
+		else:
+			self.peer = peer # public key of other person
 		self.sent = sent # bool of whether it was sent (false == received)
 		self.inception = datetime.now() # when it was sent or received
 
