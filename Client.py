@@ -25,7 +25,7 @@ class Client:
 			stores it in Outbox as TransitMessage
 		'''
 		# side note: ^ this is why I don't like how docstrings look within code--so ugly
-		local_message = LocalMessage(message_body, peer, False)
+		local_message = LocalMessage(message_body, peer, True) # was sent -> true
 		self.conversation_manager.add_message(local_message)
 		transit_message = TransitMessage(local_message, self.password)
 		self.outbox.add_transit_message(transit_message)
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 	# my_pubkey = client_instance.pocket.public_key()
 	my_pubkey, _ = pgpy.PGPKey.from_file('second_pollen_key.asc')
 	my_pubkey = my_pubkey.pubkey
-	message_body = "this is a second message key sent using pollen.im"
+	message_body = "this is a demo message (intended for user 2) sent using pollen.im"
 	# compose new message
 	client_instance.compose_message(my_pubkey, message_body)
 	print("\n\tinbox num messages: ", client_instance.inbox.count_messages())
