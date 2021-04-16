@@ -19,7 +19,7 @@ from kivy.uix.recycleview import RecycleView
 from kivy.clock import Clock
 # changing window size: https://stackoverflow.com/a/51809114/4513452
 from kivy.core.window import Window
-from kivy_garden.zbarcam import ZBarCam
+# from kivy_garden.zbarcam import ZBarCam
 
 Window.size = (375, 667)
 
