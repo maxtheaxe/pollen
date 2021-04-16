@@ -1,4 +1,5 @@
 *.asc
+!public*.asc
 # pgp_keys.asc
 __pycache__/
 run_node.bat
@@ -10,3 +11,11 @@ shelf*
 backend_venv/
 # kivy stuff (might add later, not worth missing deadline for it)
 kivy_venv/
+.buildozer/
+build/
+dist/
+*.spec
+*.xcworkspace
+.cache/
+bin/
+pollen.im.app/

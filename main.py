@@ -251,9 +251,15 @@ class HomeScreen(Screen):
 		self.manager.current = location  # swap to selected box screen
 		return
 
+	def exchange(self):
+		'''exchange messages with node, update home screen, save state'''
+		self.client_instance.update_messages()  # exchange messages with node, if possible
+		self.refresh() # update home screen, save state
+		return
+
 	def refresh(self):
 		'''update messages in client, then save state'''
-		self.client_instance.update_messages()  # exchange messages with node, if possible
+		self.ids.convo_box.populate_convos() # update convos on homescreen
 		self.save_state()  # dump self
 		return
 
@@ -271,7 +277,7 @@ class ComposeScreen(Screen):
 		'''send new message with given inputs'''
 		try:
 			self.manager.screens[0].client_instance.compose_message(recipient_key, message_body)
-			self.manager.screens[0].save_state()
+			self.manager.screens[0].refresh() # save state and update home screen
 			# only wipes text input upon successful message send
 			self.ids.recipient_key.text = ""
 			self.ids.recipient_key.hint_text = "Recipient PGP Key"

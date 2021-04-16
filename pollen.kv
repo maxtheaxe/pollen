@@ -119,11 +119,13 @@
 				# on_press: root.manager.current = 'outbox'
 				on_press: self.parent.parent.parent.box_navigate('outbox')
 			ImageButton:
-				id: refresh_button
+				id: exchange_button
 				source: 'images/double_refresh.png'
 				size_hint: (0.33, 1)
-				on_press: root.manager.current = 'settings'
+				# on_press: root.manager.current = 'settings'
+				on_press: root.exchange()
 		ConvoBox:
+		    id: convo_box
 		ImageButton:
 			id: compose_button
 			source: 'images/pencil.png'
