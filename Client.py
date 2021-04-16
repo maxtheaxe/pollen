@@ -87,7 +87,8 @@ if __name__ == '__main__':
 	# client_instance = Client()
 	# message details
 	# my_pubkey = client_instance.pocket.public_key()
-	my_pubkey, _ = pgpy.PGPKey.from_file('public_second_pollen_key.asc')
+	my_pubkey, _ = pgpy.PGPKey.from_file('second_pollen_key.asc')
+	my_pubkey = my_pubkey.pubkey
 	message_body = "this is a second message key sent using pollen.im"
 	# compose new message
 	client_instance.compose_message(my_pubkey, message_body)

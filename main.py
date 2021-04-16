@@ -49,13 +49,19 @@ class BoxButton(ButtonBehavior, BoxLayout):
 	pass
 class ConvoItem(BoxButton):
 	'''a mini preview version of a conversation'''
-	contact_name = StringProperty('') # blank string is default
-	contact = StringProperty('')
+	# contact_name = StringProperty('') # blank string is default # review: does this NEED to be a kivy prop?
+	# contact = StringProperty('') # review: does this NEED to be a kivy prop?
+	def __init__(self, **kwargs):
+		super(ConvoItem, self).__init__(**kwargs)
+		self.contact_name = ''
+		self.contact = ''
 	def set_contact_name(given_name):
 		'''sets the contact_name property to a given string'''
 		self.contact_name = given_name
-	def select_convo(self, chosen_contact = contact):
+	def select_convo(self, chosen_contact = None):
 		'''switch to the chat screen for a given contact'''
+		if chosen_contact == None: # review (janky)
+			chosen_contact = self.contact
 		# print("chosen contact: ", chosen_contact)
 		self.parent.parent.parent.parent.manager.screens[4].set_contact(chosen_contact)
 		self.parent.parent.parent.parent.manager.current = 'convo' # swap to convo screen
@@ -114,13 +120,14 @@ class MessageBox(RecycleView):
 	# if i want to use this widget elsewhere and pass in a property at instantiation
 	# need to define a kivy property as such:
 	title = StringProperty('') # blank string is default
-	contact_key = StringProperty('') # key for selecting contact
+	# contact_key = StringProperty('') # key for selecting contact (check: does this NEED to be a kivy prop?)
 	# (should be a conversation later)
 	# by default, it doesn't wipe old value--prob need to add func to do so,
 	# but dynamic updating isn't necessary here
 	def __init__(self, **kwargs): 
 		super(MessageBox, self).__init__(**kwargs)
 		self.data = []
+		self.contact_key = '' # for testing purposes, remove
 		global client_instance
 		# global current_convo
 		# print(contact_key)
@@ -128,21 +135,22 @@ class MessageBox(RecycleView):
 		# for contact in client_instance.conversation_manager.conversations:
 		# 	friendly_name = client_instance.conversation_manager.conversations[contact].friendly_name
 		# 	self.data.append({'contact_name': friendly_name, 'contact': contact})
-		# temporarily grabbing first contact for testing
+		# temporarily grabbing first contact for testing (errors on no pre-made data)
 		for contact in client_instance.conversation_manager.conversations:
-			contact_key = str(client_instance.conversation_manager.conversations[contact].peer)
+			self.contact_key = str(client_instance.conversation_manager.conversations[contact].peer)
+			# self.extra_contact_key = str(client_instance.conversation_manager.conversations[contact].peer)
 		# should get contact key from parent
 		# contact_key = self.parent.parent.chosen_contact
-		contact = client_instance.conversation_manager.conversations[contact_key]
+		contact = client_instance.conversation_manager.conversations[self.contact_key]
 		for message_item in contact.messages:
 			self.data.append({'message_text': message_item.message, 'sent': message_item.sent})
 			# print("message text: ", message_item.message)
 		return
 	def set_contact(self, chosen_contact_key = None): # needs massive cleaning up; just for testing
 		'''sets the current contact to the given (string) key'''
-		contact_key = chosen_contact_key
+		self.contact_key = str(chosen_contact_key)
 		# global current_convo
-		contact = client_instance.conversation_manager.conversations[current_convo]
+		contact = client_instance.conversation_manager.conversations[self.contact_key]
 		self.data = []
 		for message_item in contact.messages:
 			self.data.append({'message_text': message_item.message, 'sent': message_item.sent})
@@ -158,14 +166,14 @@ class ComposeScreen(Screen):
 class BoxScreen(Screen):
 	pass
 class ConversationScreen(BoxScreen):
-	chosen_contact = StringProperty('') # might not be necessary, can't remember
+	# chosen_contact = StringProperty('') # review: might not be necessary, can't remember
 	# ref: https://stackoverflow.com/a/50294037/4513452
-	message_box = ObjectProperty(MessageBox()) # so we can call child methods later
+	message_box = ObjectProperty(None) # so we can call child methods later
 	def set_contact(self, contact):
 		chosen_contact = contact # maybe remove
-		print("contact: ", contact)
+		# print("contact: ", contact)
 		# now call the set contact method within message box
-		message_box.set_contact(contact)
+		self.message_box.set_contact(contact)
 		return
 	pass
 class InboxScreen(BoxScreen):
