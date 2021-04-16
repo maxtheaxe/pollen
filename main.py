@@ -19,6 +19,7 @@ from kivy.uix.recycleview import RecycleView
 from kivy.clock import Clock
 # changing window size: https://stackoverflow.com/a/51809114/4513452
 from kivy.core.window import Window
+from kivy_garden.zbarcam import ZBarCam
 
 Window.size = (375, 667)
 
@@ -281,6 +282,12 @@ class ComposeScreen(Screen):
 			self.ids.recipient_key.hint_text = "invalid recipient--please retry"
 		return
 
+	def pass_recipient(self, peer_key):
+		'''set recipient field for new message'''
+		self.ids.recipient_key.text = peer_key  # pass given key
+		self.manager.current = 'compose'
+		return
+
 	pass
 
 
@@ -301,8 +308,7 @@ class ConversationScreen(BoxScreen):
 
 	def start_message(self):
 		'''open message compose screen with current peer'''
-		self.manager.screens[3].ids.recipient_key.text = self.contact # pass peer key
-		self.manager.current = 'compose'
+		self.manager.screens[3].pass_recipient(self.contact) # pass peer key to compose
 		return
 
 	def create_name(self, pgp_key):  # review: double duplicate from Conversation class, improve
@@ -347,6 +353,12 @@ class SettingsScreen(Screen):
 
 
 class SetupScreen(Screen):
+	pass
+
+class ScanScreen(Screen):
+	def scan_qr(self):
+		'''passes scanned qr into compose screen'''
+		self.manager.screens[3].pass_recipient(self.qr_data)  # pass peer key to compose
 	pass
 
 

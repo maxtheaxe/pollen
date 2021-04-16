@@ -1,6 +1,7 @@
 # pollen.im gui (main.kv) by max
 #:kivy 1.0.9
 #:import NoTransition kivy.uix.screenmanager.NoTransition
+#:import ZBarCam kivy_garden.zbarcam.ZBarCam
 
 <ScreenManagement>:
 	transition: NoTransition()
@@ -11,6 +12,7 @@
 	ConversationScreen:
 	SettingsScreen:
 	SetupScreen:
+	ScanScreen:
 
 <ConvoItem>:
 	orientation: 'horizontal'
@@ -140,11 +142,18 @@
 		BoxLayout:
 			size_hint: (1, 0.85)
 			orientation: 'vertical'
-			HighlightTextInput:
-			    id: recipient_key
-				size_hint: (1, 0.125)
-				hint_text: 'Recipient PGP Key'
-				font_size: 20
+			BoxLayout:
+			    size_hint: (1, 0.125)
+                HighlightTextInput:
+                    id: recipient_key
+                    size_hint: (0.8, 1)
+                    hint_text: 'Recipient PGP Key'
+                    font_size: 20
+                ImageButton:
+                    id: qr_read_button
+                    size_hint: (0.2, 1)
+                    source: 'images/qr.png'
+                    on_press: root.go_scan()
 			TextInput:
 			    id: message_body
 			    hint_text: 'Message Body'
@@ -229,3 +238,20 @@
 
 <SetupScreen>:
 	name: 'setup'
+
+<ScanScreen>:
+    name: 'scan'
+    qr_data: ', '.join([str(symbol.data) for symbol in zbarcam.symbols]) # review/verify
+    BoxLayout:
+        orientation: 'vertical'
+        ZBarCam:
+            id: zbarcam
+            # optional, by default checks all types
+            code_types: 'QRCODE', 'EAN13'
+        # Label:
+        #    size_hint: None, None
+        #    size: self.texture_size[0], 50
+        #    text: ', '.join([str(symbol.data) for symbol in zbarcam.symbols])
+        BoxButton:
+            size_hint: (1, 0.2)
+            on_press: root.scan_qr()
