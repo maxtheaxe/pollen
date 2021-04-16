@@ -39,12 +39,15 @@ class NamedImageButton(ImageButton):
 
 	pass
 
+
 class HighlightTextInput(TextInput):
 	'''TextInput box that highlights all contents when pressed'''
+
 	# ref: https://stackoverflow.com/a/51453778
 	def on_touch_down(self, touch):
 		Clock.schedule_once(lambda dt: self.select_all())
 		TextInput.on_touch_down(self, touch)
+
 	pass
 
 
@@ -57,8 +60,6 @@ class BoxButton(ButtonBehavior, BoxLayout):
 class ConvoItem(BoxButton):
 	'''a mini preview version of a conversation'''
 
-	# contact_name = StringProperty('') # blank string is default # review: does this NEED to be a kivy prop?
-	# contact = StringProperty('') # review: does this NEED to be a kivy prop?
 	def __init__(self, **kwargs):
 		super(ConvoItem, self).__init__(**kwargs)
 		self.contact_name = ''
@@ -84,6 +85,39 @@ class Message(BoxButton):
 	'''parent message type'''
 	message_text = StringProperty('')  # blank string is default
 	sent = BooleanProperty(True)  # blank string is default
+
+	def get_arrow(self):
+		'''returns appropriate arrow based on whether it was sent or not'''
+		if self.sent:
+			return "images/double_left_arrow.png"
+		else:
+			return "images/double_right_arrow.png"
+		pass
+
+	def alignment(self):
+		'''returns appropriate alignment based on whether it was sent or not'''
+		if self.sent:
+			return "right"
+		else:
+			return "left"
+		pass
+
+	def get_color(self):
+		'''returns appropriate color based on whether it was sent or received'''
+		if self.sent:
+			return (255, 255, 255)
+		else:
+			return (0, 0, 0)
+		pass
+
+	def get_text_color(self):
+		'''returns appropriate color based on whether it was sent or received'''
+		if not self.sent:
+			return (255, 255, 255)
+		else:
+			return (0, 0, 0)
+		pass
+
 	pass
 
 
@@ -219,7 +253,7 @@ class HomeScreen(Screen):
 	def refresh(self):
 		'''update messages in client, then save state'''
 		self.client_instance.update_messages()  # exchange messages with node, if possible
-		self.save_state() # dump self
+		self.save_state()  # dump self
 		return
 
 	def save_state(self):
@@ -237,11 +271,16 @@ class ComposeScreen(Screen):
 		try:
 			self.manager.screens[0].client_instance.compose_message(recipient_key, message_body)
 			self.manager.screens[0].save_state()
-			self.manager.current = 'home' # message sent, return to home screen
-		except: # invalid pgp key for recipient
+			# only wipes text input upon successful message send
+			self.ids.recipient_key.text = ""
+			self.ids.recipient_key.hint_text = "Recipient PGP Key"
+			self.ids.message_body.text = ""
+			self.manager.current = 'home'  # message sent, return to home screen
+		except:  # invalid pgp key for recipient
 			self.ids.recipient_key.text = ""
 			self.ids.recipient_key.hint_text = "invalid recipient--please retry"
 		return
+
 	pass
 
 
@@ -252,9 +291,17 @@ class BoxScreen(Screen):
 class ConversationScreen(BoxScreen):
 	# ref: https://stackoverflow.com/a/50294037/4513452
 	message_box = ObjectProperty(None)  # so we can call child methods later
+	contact = StringProperty() # so we can call compose directly later
 
 	def set_contact(self, contact):
 		self.message_box.set_contact(contact)
+		self.contact = contact
+		return
+
+	def start_message(self):
+		'''open message compose screen with current peer'''
+		self.manager.screens[3].ids.recipient_key.text = self.contact # pass peer key
+		self.manager.current = 'compose'
 		return
 
 	pass
