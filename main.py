@@ -355,10 +355,18 @@ class SettingsScreen(Screen):
 class SetupScreen(Screen):
 	pass
 
+
 class ScanScreen(Screen):
 	def scan_qr(self):
 		'''passes scanned qr into compose screen'''
 		self.manager.screens[3].pass_recipient(self.qr_data)  # pass peer key to compose
+	pass
+
+
+class StartScreen(Screen):
+	def handle_key(self):
+		'''handle the creation/unlocking of pgp key'''
+		return
 	pass
 
 

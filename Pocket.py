@@ -14,6 +14,9 @@ class Pocket:
 		# 	raise ValueError("all arguments cannot be None")
 		elif ((name != None) and (password != None)): # if name and pw are given
 			key = self.create_key(name, password, filename)
+		elif not any([key, name, password]): # if all args none, make new key w defaults
+			key = self.create_key(name = "fake_user",
+			                      password = "fake_password", filename = "fake_key.asc")
 		else: # some sort of mistake with arguments
 			# raise error and show faulty arguments
 			error_text = "given args: " + str(key) + ", " + name + ", " + password
