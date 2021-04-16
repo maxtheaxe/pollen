@@ -154,6 +154,7 @@ class ConvoBox(RecycleView):
 
 	def populate_convos(self):
 		'''populate home screen with conversations'''
+		self.data = []
 		# handle no messages exist
 		client_instance = self.parent.parent.manager.screens[0].client_instance
 		if client_instance.conversation_manager.count_conversations() != 0:
