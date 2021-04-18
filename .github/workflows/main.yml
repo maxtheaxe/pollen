@@ -51,4 +51,4 @@ jobs:
 
       - name: Push binary to data branch
         if: github.event_name == 'push'
-        run: python main/.ci/move_binary.py "${{ steps.buildozer.outputs.filename }}" main data
+        run: python main/.ci/move_binary.py "${{ steps.buildozer.outputs.filename }}" main data bin
