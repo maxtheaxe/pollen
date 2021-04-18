@@ -21,13 +21,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          path: master
+          path: main
 
       - name: Build with Buildozer
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
-          repository_root: master
+          repository_root: main
           workdir: test_app
           buildozer_version: stable
 
@@ -51,4 +51,4 @@ jobs:
 
       - name: Push binary to data branch
         if: github.event_name == 'push'
-        run: python master/.ci/move_binary.py "${{ steps.buildozer.outputs.filename }}" master data
+        run: python main/.ci/move_binary.py "${{ steps.buildozer.outputs.filename }}" main data
