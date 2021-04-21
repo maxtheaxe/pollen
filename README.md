@@ -23,7 +23,7 @@ pollen was inspired by the many governments who continue to shut off the interne
 
 ## What's next for pollen.im
 
-* finished GUI releases for every major platform
+* compiled GUI releases for every major platform
 
 ## Extras
 
