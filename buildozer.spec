@@ -177,7 +177,7 @@ android.api = 30
 # can be necessary to solve conflicts in gradle_dependencies
 # please enclose in double quotes 
 # e.g. android.add_packaging_options = "exclude 'META-INF/common.kotlin_module'", "exclude 'META-INF/*.kotlin_module'"
-#android.add_packaging_options =
+android.add_packaging_options = 'doNotStrip "*/armeabi/*.so"', 'doNotStrip "*/armeabi-v7a/*.so"', 'doNotStrip "*/x86/*.so"'
 
 # (list) Java classes to add as activities to the manifest.
 #android.add_activities = com.example.ExampleActivity
