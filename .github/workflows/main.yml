@@ -28,7 +28,7 @@ jobs:
         id: buildozer
         with:
           command:
-            apt install libbz2-dev
+            sudo apt install libbz2-dev
             buildozer android debug
           repository_root: main
           workdir: .
