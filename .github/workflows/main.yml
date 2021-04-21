@@ -27,7 +27,7 @@ jobs:
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
-          command:
+          command: |
             sudo apt install libbz2-dev
             buildozer android debug
           repository_root: main
