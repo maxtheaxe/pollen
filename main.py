@@ -18,10 +18,10 @@ from kivy.properties import StringProperty, BooleanProperty, ObjectProperty
 from kivy.uix.recycleview import RecycleView
 from kivy.clock import Clock
 # changing window size: https://stackoverflow.com/a/51809114/4513452
-# from kivy.core.window import Window
+from kivy.core.window import Window
 # from kivy_garden.zbarcam import ZBarCam
 
-# Window.size = (375, 667)
+Window.size = (375, 667)
 
 
 # create helper widgets
@@ -90,9 +90,9 @@ class Message(BoxButton):
 	def get_arrow(self):
 		'''returns appropriate arrow based on whether it was sent or not'''
 		if self.sent:
-			return "images/double_left_arrow.png"
+			return "images/double_right_noun.png"
 		else:
-			return "images/double_right_arrow.png"
+			return "images/double_left_noun.png"
 		pass
 
 	def alignment(self):

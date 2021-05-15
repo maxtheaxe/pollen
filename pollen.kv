@@ -22,7 +22,7 @@
 	on_press: root.select_convo() # swap screens
 	Image:
 		size_hint: (0.2, 1)
-		source: 'images/question_mark.png'
+		source: 'images/contact_noun.png'
 	Label:
 		size_hint: (0.6, 1)
 		# text: root.parent.text
@@ -30,7 +30,7 @@
 		font_size: 30
 	Image:
 		size_hint: (0.2, 1)
-		source: 'images/right_arrow.png'
+		source: 'images/right_noun.png'
 
 <Message>:
     orientation: 'horizontal'
@@ -38,11 +38,12 @@
 	# sent: root.sent
 	message_text: ''
 	BoxLayout:
-		size_hint: (0.05, 1)
+		size_hint: (0.075, 1)
 	Label:
 		text: root.message_text
 		# size_hint: (0.8, 1)
 		# font_size: 15
+		padding_y: 20
 		size_hint_y: None
 		text_size: self.width, None
 		height: self.texture_size[1]
@@ -59,7 +60,7 @@
 	title: root.parent.parent.title
 	ImageButton: # back button
 		size_hint: (0.2, 1)
-		source: 'images/left_arrow.png'
+		source: 'images/left_noun.png'
 		on_press: root.parent.parent.manager.current = 'home'
 	Label:
 		size_hint: (0.8, 1)
@@ -108,19 +109,19 @@
 			size_hint: (1, 0.15)
 			ImageButton:
 				id: inbox_button
-				source: 'images/down_arrow.png'
+				source: 'images/inbox_noun.png'
 				size_hint: (0.33, 1)
 				# on_press: root.manager.current = 'inbox'
 				on_press: self.parent.parent.parent.box_navigate('inbox')
 			ImageButton:
 				id: outbox_button
-				source: 'images/up_arrow.png'
+				source: 'images/outbox_noun.png'
 				size_hint: (0.33, 1)
 				# on_press: root.manager.current = 'outbox'
 				on_press: self.parent.parent.parent.box_navigate('outbox')
 			ImageButton:
 				id: exchange_button
-				source: 'images/double_refresh.png'
+				source: 'images/refresh_noun.png'
 				size_hint: (0.33, 1)
 				# on_press: root.manager.current = 'settings'
 				on_press: root.exchange()
@@ -128,7 +129,7 @@
 		    id: convo_box
 		ImageButton:
 			id: compose_button
-			source: 'images/pencil.png'
+			source: 'images/compose_noun.png'
 			size_hint: (1, 0.15)
 			on_press: root.manager.current = 'compose'
 
@@ -189,7 +190,7 @@
                 size: self.size
         Image:
             id: compose_button
-            source: 'images/pencil.png'
+            source: 'images/compose_noun.png'
             # size_hint: (1, 0.15)
 
 <InboxScreen>:
