@@ -31,6 +31,8 @@ a.button {
 /*	-webkit-appearance: button;
 	-moz-appearance: button;
 	appearance: button;*/
+	display: inline-block;
+	margin: 0px;
 	padding: 5px;
 	background: white;
 	border-radius: 2px;
@@ -39,4 +41,7 @@ a.button {
 }
 a.button:hover {
 	background: gray;
+}
+a.first {
+	margin-bottom: 3px;
 }
