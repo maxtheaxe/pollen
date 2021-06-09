@@ -27,4 +27,5 @@ pollen was inspired by the many governments who continue to shut off the interne
 
 ## Extras
 
-* [demo video](https://youtu.be/zsKI6kuX9c4)
+* [the final paper](https://digitalcommons.colby.edu/honorstheses/1310/)
+* [backend demo video](https://youtu.be/zsKI6kuX9c4)
